@@ -2,19 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>US Wages Narrative Dashboard</title>
+  <title>Median & Average Wages (1973–2022)</title>
   <script src="https://d3js.org/d3.v5.min.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #cfd8dc);
+      text-align: center;
+      color: #333;
+    }
+
+    h1 {
+      color: #ff6600;
+    }
+
+    #vis {
+      margin: 30px auto;
+      width: 80%;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      background-color: #ff8000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ff9a1f;
+    }
+  </style>
 </head>
-<body onload="init()">
+<body>
   <h1>Median & Average Hourly Wages in the U.S. (1973–2022)</h1>
+
   <div id="vis"></div>
 
-  <div id="navigation">
+  <div>
     <button onclick="prevScene()">Previous</button>
     <button onclick="nextScene()">Next</button>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    var sceneIndex = 0;
+    var scenes = [scene1, scene2];
+    var wageData = [];
+
+    function init() {
+      d3.csv("data/median_average_wages.csv").then(function(data) {
+        data.forEach(function(d) {
+          d.Year = +d.Year;
+          d.Median = +d.Median;
+          d.Average = +d.Average;
+        });
+
+        wageData = data;
+        scenes[sceneIndex]();
+      }).catch(function(error) {
+        d3.select("#vis").html("<p style='color:red;'>Failed to load data: " + error.message + "</p>");
+      });
+    }
+
+    function nextScene() {
+      sceneIndex = (sceneIndex + 1) % scenes.length;
+      scenes[sceneIndex]();
+    }
+
+    function prevScene() {
+      sceneIndex = (sceneIndex - 1 + scenes.length) % scenes.length;
+      scenes[sceneIndex]();
+    }
+
+    function scene1() {
+      d3.select("#vis").html("");
+      d3.select("#vis")
+        .append("div")
+        .attr("class", "intro-text")
+        .html("<h2>Explore Wage Trends</h2><p>How have median and average wages changed from 1973 to 2022?</p><p>Click next to begin your journey.</p>");
+    }
+
+    function scene2() {
+      d3.select("#vis").html("");
+      var svg = d3.select("#vis").append("svg")
+                  .attr("width", 700)
+                  .attr("height", 400);
+
+      var x = d3.scaleLinear()
+                .domain(d3.extent(wageData, function(d) { return d.Year; }))
+                .range([50, 650]);
+
+      var y = d3.scaleLinear()
+                .domain([0, d3.max(wageData, function(d) { return d.Average; })])
+                .range([350, 50]);
+
+      var line = d3.line()
+                   .x(function(d) { return x(d.Year); })
+                   .y(function(d) { return y(d.Average); });
+
+      svg.append("path")
+         .datum(wageData)
+         .attr("fill", "none")
+         .attr("stroke", "orange")
+         .attr("stroke-width", 2)
+         .attr("d", line);
+
+      svg.append("text")
+         .attr("x", 50)
+         .attr("y", 30)
+         .text("Average Hourly Wages Over Time")
+         .attr("font-size", "16px")
+         .attr("fill", "black");
+    }
+
+    init(); // kick things off
+  </script>
 </body>
 </html>

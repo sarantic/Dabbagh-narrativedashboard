@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Narrative Visualization</title>
+  <title>Delhi Climate Visualization</title>
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div id="container">
-    <svg width="800" height="600"></svg>
-    <div id="annotations"></div>
-    <button id="next">Next</button>
+<body onload="init()">
+  <h1>Delhi Daily Climate Visualization</h1>
+  <div id="chart"></div>
+  <div id="navigation">
+    <button onclick="prevScene()">Previous</button>
+    <button onclick="nextScene()">Next</button>
   </div>
   <script src="script.js"></script>
 </body>
 </html>
-

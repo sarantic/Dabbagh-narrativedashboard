@@ -1,18 +1,49 @@
+/* Global page styling */
 body {
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #f5f7fa, #c3cfe2); /* subtle gradient */
+  margin: 0;
+  padding: 20px;
+  color: #222;
   text-align: center;
-  margin: 30px;
 }
 
+/* Header style */
+h1 {
+  color: #ff7b00; /* vibrant orange */
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+/* Chart container */
 #chart {
-  margin: 20px auto;
-  width: 800px;
-  height: 400px;
+  margin: 0 auto;
+  width: 90%;
+  max-width: 800px;
+  height: 500px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+/* Navigation buttons */
+#navigation {
+  margin-top: 30px;
 }
 
 button {
-  margin: 10px;
-  padding: 10px 20px;
+  background: #ff7b00; /* orange */
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  margin: 0 10px;
+  border-radius: 6px;
   font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
+button:hover {
+  background: #0057a0; /* deep blue on hover */
+}

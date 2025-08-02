@@ -1,5 +1,5 @@
 let sceneIndex = 0;
-const scenes = [scene1, scene2, scene3]; //defined below
+const scenes = [scene1, scene2]; //defined below
 
 function init() {
   d3.csv("data/median_average_wages.csv").then(function(data) {

@@ -55,20 +55,23 @@
     var scenes = [scene1, scene2];
     var wageData = [];
 
-    function init() {
-      d3.csv("data/median_average_wages.csv").then(function(data) {
+    async function init() {
+      try {
+        const data = await d3.csv("data/median_average_wages.csv");
+    
         data.forEach(function(d) {
           d.Year = +d.Year;
           d.Median = +d.Median;
           d.Average = +d.Average;
-        });
-
-        wageData = data;
+        })
+    
+        window.wageData = data;
+    
         scenes[sceneIndex]();
-      }).catch(function(error) {
-        d3.select("#vis").html("<p style='color:red;'>Failed to load data: " + error.message + "</p>");
-      });
-    }
+      } catch (error) {
+        console.log("Error loading or parsing CSV:", error);
+  }
+}
 
     function nextScene() {
       sceneIndex = (sceneIndex + 1) % scenes.length;

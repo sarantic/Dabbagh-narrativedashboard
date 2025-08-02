@@ -1,1 +1,18 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  margin: 30px;
+}
+
+#chart {
+  margin: 20px auto;
+  width: 800px;
+  height: 400px;
+}
+
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
 

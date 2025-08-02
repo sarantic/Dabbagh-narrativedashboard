@@ -33,7 +33,6 @@
       padding: 10px 20px;
       margin: 10px;
       font-size: 16px;
-      cursor: pointer;
     }
 
     button:hover {
@@ -113,6 +112,24 @@
          .attr("stroke", "orange")
          .attr("stroke-width", 2)
          .attr("d", line);
+      
+      var path = svg.append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "orange")
+      .attr("stroke-width", 2)
+      .attr("d", line);
+
+      var totalLength = path.node().getTotalLength();
+
+      path
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .duration(3000)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+
 
       svg.append("text")
          .attr("x", 50)

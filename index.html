@@ -85,7 +85,7 @@
     }
 
 function renderChart(trigger) {
-  d3.select("#vis").html(""); 
+  d3.select("#vis").html("");
 
   var svg = d3.select("#vis").append("svg")
               .attr("width", 700)
@@ -98,6 +98,7 @@ function renderChart(trigger) {
   var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   var data = window.wageData;
+  data.sort(function(a, b) { return a.year - b.year; });
 
   var x = d3.scaleLinear()
             .domain(d3.extent(data, function(d) { return d.year; }))
@@ -115,7 +116,6 @@ function renderChart(trigger) {
                     .x(function(d) { return x(d.year); })
                     .y(function(d) { return y(d.women_average); });
 
-  // Optionally animate the line
   var menPath = g.append("path")
                 .datum(data)
                 .attr("fill", "none")
@@ -130,6 +130,7 @@ function renderChart(trigger) {
                 .attr("stroke-width", 2)
                 .attr("d", womenLine);
 
+  // Animation
   if (trigger.animate) {
     [menPath, womenPath].forEach(function(path) {
       var length = path.node().getTotalLength();
@@ -146,44 +147,138 @@ function renderChart(trigger) {
 
   g.append("g").call(d3.axisLeft(y));
 
-  // Title
   svg.append("text")
      .attr("x", 350)
      .attr("y", 20)
      .attr("text-anchor", "middle")
      .text("Men's vs Women's Average Wages (1973–2022)")
      .style("font-size", "16px");
+  
+  if (trigger.title) {
+  svg.append("text")
+     .attr("x", 350)
+     .attr("y", 20)
+     .attr("text-anchor", "middle")
+     .text(trigger.title)
+     .style("font-size", "16px");
+}
 
-  // === Annotation Logic (trigger.annotationYear) ===
+if (trigger.annotationText) {
+  svg.append("text")
+     .attr("x", 350)
+     .attr("y", 40)
+     .attr("text-anchor", "middle")
+     .text(trigger.annotationText)
+     .style("font-size", "12px")
+     .style("fill", "gray");
+}
+
+
+  // Tooltip
+  var tooltip = d3.select("body").append("div")
+                  .attr("class", "tooltip")
+                  .style("position", "absolute")
+                  .style("padding", "8px")
+                  .style("background", "#fff")
+                  .style("border", "1px solid #ccc")
+                  .style("border-radius", "4px")
+                  .style("pointer-events", "none")
+                  .style("opacity", 0);
+  
+
+  // Points
+  g.selectAll(".dot-men")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("class", "dot-men")
+    .attr("cx", function(d) { return x(d.year); })
+    .attr("cy", function(d) { return y(d.men_average); })
+    .attr("r", 4)
+    .attr("fill", "steelblue")
+    .on("mouseover", function(event, d) {
+      tooltip.transition().duration(200).style("opacity", 0.9);
+      tooltip.html(`<strong>Year:</strong> ${d.year}<br>
+                    <strong>Men:</strong> $${d.men_average.toFixed(2)}`)
+             .style("left", (event.pageX + 10) + "px")
+             .style("top", (event.pageY - 30) + "px");
+    })
+    .on("mouseout", function() {
+      tooltip.transition().duration(300).style("opacity", 0);
+    });
+
+  g.selectAll(".dot-women")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("class", "dot-women")
+    .attr("cx", function(d) { return x(d.year); })
+    .attr("cy", function(d) { return y(d.women_average); })
+    .attr("r", 4)
+    .attr("fill", "orange")
+    .on("mouseover", function(event, d) {
+      tooltip.transition().duration(200).style("opacity", 0.9);
+      tooltip.html(`<strong>Year:</strong> ${d.year}<br>
+                    <strong>Women:</strong> $${d.women_average.toFixed(2)}`)
+             .style("left", (event.pageX + 10) + "px")
+             .style("top", (event.pageY - 30) + "px");
+    })
+    .on("mouseout", function() {
+      tooltip.transition().duration(300).style("opacity", 0);
+    });
+
+  if (trigger.highlightYears) {
+  trigger.highlightYears.forEach(function(year) {
+    var point = data.find(function(d) { return d.year === year; });
+    if (point) {
+      g.append("circle")
+        .attr("cx", x(point.year))
+        .attr("cy", y(point.men_average))
+        .attr("r", 6)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 2);
+
+      g.append("circle")
+        .attr("cx", x(point.year))
+        .attr("cy", y(point.women_average))
+        .attr("r", 6)
+        .attr("fill", "none")
+        .attr("stroke", "orange")
+        .attr("stroke-width", 2);
+    }
+  });
+}
+
+
+  // Trigger-based Annotation
   if (trigger.annotationYear !== null) {
     var focus = data.find(function(d) { return d.year === trigger.annotationYear; });
 
     if (focus) {
-      // Draw annotation circle and text
-      g.append("circle")
-        .attr("cx", x(focus.year))
-        .attr("cy", y(focus.men_average))
-        .attr("r", 4)
-        .attr("fill", "steelblue");
-
-      g.append("circle")
-        .attr("cx", x(focus.year))
-        .attr("cy", y(focus.women_average))
-        .attr("r", 4)
-        .attr("fill", "orange");
+      g.append("text")
+        .attr("x", x(focus.year) + 10)
+        .attr("y", y(focus.men_average) - 20)
+        .style("fill", "steelblue")
+        .text("Men $" + focus.men_average.toFixed(2));
 
       g.append("text")
         .attr("x", x(focus.year) + 10)
-        .attr("y", y(focus.men_average) - 10)
-        .text("Men: $" + focus.men_average.toFixed(2));
+        .attr("y", y(focus.women_average) + 20)
+        .style("fill", "orange")
+        .text("Women $" + focus.women_average.toFixed(2));
 
-      g.append("text")
-        .attr("x", x(focus.year) + 10)
-        .attr("y", y(focus.women_average) + 15)
-        .text("Women: $" + focus.women_average.toFixed(2));
+      g.append("line")
+        .attr("x1", x(focus.year))
+        .attr("y1", y(focus.men_average))
+        .attr("x2", x(focus.year))
+        .attr("y2", y(focus.women_average))
+        .attr("stroke", "gray")
+        .attr("stroke-dasharray", "4 2");
     }
   }
 }
+
 function scene1() {
   d3.select("#vis").html("");
   d3.select("#vis")
@@ -209,10 +304,12 @@ function scene3() {
 function scene4() {
   renderChart({
     animate: false,
-    annotationYear: null
+    annotationYear: 2022,
+    highlightYears: [1973, 2022],
+    title: "The Shrinking Wage Gap (1973 vs 2022)",
+    annotationText: "In 1973, women earned ~64% of what men earned. By 2022, that increased to ~78%."
   });
 }
-
 
 
 

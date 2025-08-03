@@ -798,6 +798,7 @@ function scene2() {
 
     g.append("g")
       .attr("class", "scene2-annotations")
+      .transition()
       .call(makeAnnotations);
 
   }, 2200); // Waits for animation to complete

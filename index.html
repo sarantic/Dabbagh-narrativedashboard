@@ -55,6 +55,8 @@
     var sceneIndex = 0;
     var scenes = [scene1, scene2, scene3, scene4];
     var wageData = [];
+    var tooltip = floatingTooltip("tooltip", 160);
+
 
 
    async function init() {
@@ -99,7 +101,6 @@ function renderChart(trigger) {
   var margin = {top: 50, right: 20, bottom: 40, left: 60};
   var width = 700 - margin.left - margin.right;
   var height = 400 - margin.top - margin.bottom;
-  var tooltip = floatingTooltip("tooltip", 160);
 
 
   var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -327,6 +328,9 @@ function scene4() {
 
 
     init(); // kick things off
+   <script type="text/javascript" src="javascript/tooltip.js"></script>
+
   </script>
+  
 </body>
 </html>

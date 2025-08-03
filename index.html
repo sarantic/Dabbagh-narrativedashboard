@@ -68,6 +68,17 @@
   fill: #666;
   font-size: 12px;
 }
+    .annotation-note-title {
+  font-weight: bold;
+  font-size: 14px;
+  fill: #2a6786;
+}
+
+.annotation-note-label {
+  fill: #555;
+  font-size: 12px;
+}
+
 
 
   </style>
@@ -124,9 +135,10 @@ function renderChart(trigger) {
 
   const svgWidth = 700;
   const svgHeight = 400;
-  const margin = { top: 50, right: 20, bottom: 40, left: 60 };
-  const width = svgWidth - margin.left - margin.right;
-  const height = svgHeight - margin.top - margin.bottom;
+  var margin = { top: 80, right: 80, bottom: 60, left: 80 };
+var width = 700 - margin.left - margin.right;
+var height = 450 - margin.top - margin.bottom;
+
 
   const svg = d3.select("#vis")
     .append("svg")
@@ -492,7 +504,12 @@ function scene2() {
           title: "1973: $17.31",
           label: "Starting point for women"
         },
-        connector: { end: "arrow" },
+       connector: {
+  end: "arrow",
+  type: "elbow",
+  lineType: "horizontal",
+  lineWidth: 2
+},
         x: x(1973),
         y: y(17.31),
         dx: -60,
@@ -503,7 +520,12 @@ function scene2() {
           title: "2022: $27.86",
           label: "Women's wage grew ~61%"
         },
-        connector: { end: "arrow" },
+       connector: {
+  end: "arrow",
+  type: "elbow",
+  lineType: "horizontal",
+  lineWidth: 2
+},
         x: x(2022),
         y: y(27.86),
         dx: 30,
@@ -514,11 +536,40 @@ function scene2() {
     const makeAnnotations = d3.annotation()
       .type(d3.annotationLabel)
       .annotations(annotations);
+      .accessors({
+    x: d => d.x,
+    y: d => d.y
+  })
+  .accessorsInverse({
+    x: d => d.x,
+    y: d => d.y
+  })
+  .annotations(annotations)
+  .textWrap(150)
+  .notePadding(10)
+  .noteAlign("middle");
+
 
     g.append("g")
       .attr("class", "scene2-annotations")
       .call(makeAnnotations);
   }, 2200); // wait until line animation finishes
+  // Add paragraph below chart
+d3.select("#vis")
+  .append("div")
+  .attr("class", "scene2-text")
+  .style("margin-top", "20px")
+  .style("max-width", "600px")
+  .style("margin-left", "auto")
+  .style("margin-right", "auto")
+  .style("font-size", "16px")
+  .style("color", "#333")
+  .html(`
+    <p>From 1973 to 2022, women’s wages grew by nearly <strong>61%</strong> — a faster rate than men’s wages over the same period.
+    This growth helped narrow the wage gap significantly, especially during the 1990s and early 2000s.</p>
+    <p>Still, the story of progress is incomplete without understanding where we are now. Let's take a closer look in the next slide.</p>
+  `);
+
 }
 
 

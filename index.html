@@ -430,44 +430,97 @@ function scene1() {
     .style("fill", "#555")
     .text("In 1973, women earned 64% of what men earned");
   // d3-annotation arrow pointing to the women's bar
-const annotations = [
-  {
-    note: {
-      label: "Women earned only $17.31 in 1973",
-      title: "Wage Disparity"
-    },
-    subject: {
-      y1: y(17.31),
-      y2: y(17.31)
-    },
-    connector: {
-      end: "arrow"
-    },
-    x: x("Women") + x.bandwidth() / 2,
-    y: y(17.31),
-    dy: -70,
-    dx: -50
-  }
-];
+// const annotations = [
+//   {
+//     note: {
+//       label: "Women earned only $17.31 in 1973",
+//       title: "Wage Disparity"
+//     },
+//     subject: {
+//       y1: y(17.31),
+//       y2: y(17.31)
+//     },
+//     connector: {
+//       end: "arrow"
+//     },
+//     x: x("Women") + x.bandwidth() / 2,
+//     y: y(17.31),
+//     dy: -70,
+//     dx: -50
+//   }
+// ];
 
-const makeAnnotations = d3.annotation()
-  .type(d3.annotationLabel)
-  .annotations(annotations);
+// const makeAnnotations = d3.annotation()
+//   .type(d3.annotationLabel)
+//   .annotations(annotations);
 
-g.append("g")
-  .attr("class", "annotation-group")
-  .call(makeAnnotations);
+// g.append("g")
+//   .attr("class", "annotation-group")
+//   .call(makeAnnotations);
 
 }
 
 function scene2() {
   renderChart({
     animate: true,
-    annotationYear: 1973,
-    title: "The Shrinking Wage Gap (1973 vs 2022)",
-    annotationText: "In 1973, women earned ~64% of what men earned. By 2022, that increased to ~78%."
+    annotationYear: null,
+    highlightYears: [1973, 2022],  // focus on growth for women
+    title: "Women's Wages Have Grown Steadily",
+    annotationText: "From $17.31 in 1973 to $27.86 in 2022 – a ~61% increase"
   });
+
+  // Add annotation after delay to give line time to animate
+  setTimeout(() => {
+    const svg = d3.select("#vis svg");
+    const g = svg.select("g");
+
+    const data = window.wageData;
+    const width = 700 - 60 - 20;  // svgWidth - left - right margin
+    const height = 400 - 50 - 40; // svgHeight - top - bottom margin
+
+    const x = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.year))
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => Math.max(d.men_average, d.women_average))])
+      .range([height, 0]);
+
+    const annotations = [
+      {
+        note: {
+          title: "1973: $17.31",
+          label: "Starting point for women"
+        },
+        connector: { end: "arrow" },
+        x: x(1973),
+        y: y(17.31),
+        dx: -60,
+        dy: -60
+      },
+      {
+        note: {
+          title: "2022: $27.86",
+          label: "Women's wage grew ~61%"
+        },
+        connector: { end: "arrow" },
+        x: x(2022),
+        y: y(27.86),
+        dx: 30,
+        dy: -50
+      }
+    ];
+
+    const makeAnnotations = d3.annotation()
+      .type(d3.annotationLabel)
+      .annotations(annotations);
+
+    g.append("g")
+      .attr("class", "scene2-annotations")
+      .call(makeAnnotations);
+  }, 2200); // wait until line animation finishes
 }
+
 
 function scene3() {
   renderChart({

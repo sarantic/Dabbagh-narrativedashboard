@@ -395,7 +395,7 @@ function scene1() {
     .html(`
       <h2>The Starting Point: 1973</h2>
       <p>In 1973, the U.S. labor market was still strongly divided by gender. 
-         Women had entered the workforce in growing numbers, but systemic inequities persisted.
+         Women had entered the workforce in growing numbers, but systemic inequalities persisted.
          The average hourly wage for men was <strong>$26.96</strong>, while for women it was just <strong>$17.31</strong>.</p>
       <p>This represented a wage gap of <strong>$9.65</strong>, or <strong>36%</strong> less for women on average.</p>
     `);
@@ -517,7 +517,7 @@ function scene2() {
     annotationYear: null,
     highlightYears: [2014, 2022],
     title: "Wage Gap Reached Its Narrowest Point Around 2014",
-    annotationText: "By 2014, the gap had narrowed to just $5.63, but widened slightly by 2022.",
+    annotationText: "By 2014, the gap had narrowed to just $5.63, but widened slightly by 2022. (Follow along with your mouse)",
     showTrendLines: false
 
   });
@@ -597,7 +597,7 @@ function scene2() {
       .style("color", "#333")
       .html(`
         <p>From the 1970s through 2014, the wage gap steadily narrowed; it reached its lowest point in 2014 at just <strong>$5.63</strong>. 
-        This marked a milestone in wage equity between men and women.</p>
+        This marked a milestone in wage equality between men and women.</p>
         <p>However, progress slowed after 2014, and by 2022, the wage gap had widened again to <strong>$7.96</strong>. 
         What does this say about where wage equality has been heading in recent years?</p>
       `);
@@ -916,11 +916,11 @@ function showRecentStats() {
     .style("margin-top", "15px")
     .style("font-style", "italic")
     .style("color", "#555")
-    .text("Progress continues slowly, but younger generations show signs of a more equitable future.");
+    .text("Progress continues slowly, but younger generations show signs of a more equal future.");
 
   // IMAGE SECTION
   container.append("img")
-    .attr("src", "images/e78c6b20-9d2d-43a3-ac11-75407a57b68b.png")
+    .attr("src", "image.png")
     .attr("alt", "Wage gap visual comparison")
     .style("margin-top", "30px")
     .style("max-width", "100%")

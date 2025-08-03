@@ -4,16 +4,17 @@
   <meta charset="UTF-8">
   <title>Median & Average Wages (1973–2022)</title>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Inter', sans-serif;
       background: linear-gradient(to right, #e3f2fd, #cfd8dc);
       text-align: center;
       color: #333;
     }
 
     h1 {
-      color: #ff6600;
+      color: #2a6786;
     }
 
     #vis {
@@ -26,7 +27,7 @@
     }
 
     button {
-      background-color: #ff8000;
+      background-color: #dbb286;
       color: white;
       border: none;
       border-radius: 5px;
@@ -36,7 +37,7 @@
     }
 
     button:hover {
-      background-color: #ff9a1f;
+      background-color: #f7f5e8;
     }
   </style>
 </head>
@@ -120,14 +121,14 @@ function renderChart(trigger) {
                 .datum(data)
                 .attr("fill", "none")
                 .attr("stroke", "steelblue")
-                .attr("stroke-width", 2)
+                .attr("stroke-width", 4)
                 .attr("d", menLine);
 
   var womenPath = g.append("path")
                 .datum(data)
                 .attr("fill", "none")
                 .attr("stroke", "orange")
-                .attr("stroke-width", 2)
+                .attr("stroke-width", 4)
                 .attr("d", womenLine);
 
   // Animation
@@ -147,12 +148,6 @@ function renderChart(trigger) {
 
   g.append("g").call(d3.axisLeft(y));
 
-  svg.append("text")
-     .attr("x", 350)
-     .attr("y", 20)
-     .attr("text-anchor", "middle")
-     .text("Men's vs Women's Average Wages (1973–2022)")
-     .style("font-size", "16px");
   
   if (trigger.title) {
   svg.append("text")
@@ -291,6 +286,8 @@ function scene2() {
   renderChart({
     animate: true,
     annotationYear: 1973
+    title: "The Shrinking Wage Gap (1973 vs 2022)",
+    annotationText: "In 1973, women earned ~64% of what men earned. By 2022, that increased to ~78%."
   });
 }
 
@@ -298,10 +295,13 @@ function scene3() {
   renderChart({
     animate: false,
     annotationYear: 2022
+    title: "The Shrinking Wage Gap (1973 vs 2022)",
+    annotationText: "In 1973, women earned ~64% of what men earned. By 2022, that increased to ~78%."
   });
 }
 
 function scene4() {
+  
   renderChart({
     animate: false,
     annotationYear: 2022,

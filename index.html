@@ -508,6 +508,12 @@ function scene1() {
 // g.append("g")
 //   .attr("class", "annotation-group")
 //   .call(makeAnnotations);
+   container.append("p")
+    .style("margin-top", "25px")
+    .style("font-size", "12px")
+    .style("color", "#777")
+    .html(`Source: <a href="https://www.kaggle.com/datasets/asaniczka/median-and-avg-hourly-wages-in-the-usa-1973-2022`);
+
 
 }
 
@@ -542,7 +548,7 @@ function scene2() {
   {
     note: {
       title: "2014: Gap = $5.63",
-      label: "It took 41 years for women to make 18% less than men, on average.",
+      label: "It took 41 years for women to make 82% of men's hourly wage, on average.",
     },
     connector: {
       end: "arrow",

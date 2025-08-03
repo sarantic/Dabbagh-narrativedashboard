@@ -33,7 +33,7 @@ h1 {
 }
 
 button {
-  background: #dbb286; /* orange */
+  background: #b98f60; /* orange */
   color: #fff;
   border: none;
   padding: 12px 24px;
@@ -45,5 +45,5 @@ button {
 }
 
 button:hover {
-  background: #0057a0; /* deep blue on hover */
+  background: #e1c29e; /* deep blue on hover */
 }

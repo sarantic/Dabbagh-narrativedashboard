@@ -64,6 +64,8 @@
             d.year = +d.year;
             d.median = +d.median;
             d.average = +d.average;
+           d.women_average = +d.women_average;
+            d.men_average = +d.men_average;
           });
 
     
@@ -90,7 +92,9 @@ function renderChart(trigger) {
 
   var svg = d3.select("#vis").append("svg")
               .attr("width", 700)
-              .attr("height", 400);
+              .attr("height", 400)
+              .style("font-family", "Inter, sans-serif");
+
 
   var margin = {top: 50, right: 20, bottom: 40, left: 60};
   var width = 700 - margin.left - margin.right;
@@ -285,7 +289,7 @@ function scene1() {
 function scene2() {
   renderChart({
     animate: true,
-    annotationYear: 1973
+    annotationYear: 1973,
     title: "The Shrinking Wage Gap (1973 vs 2022)",
     annotationText: "In 1973, women earned ~64% of what men earned. By 2022, that increased to ~78%."
   });
@@ -294,7 +298,7 @@ function scene2() {
 function scene3() {
   renderChart({
     animate: false,
-    annotationYear: 2022
+    annotationYear: 2022,
     title: "The Shrinking Wage Gap (1973 vs 2022)",
     annotationText: "In 1973, women earned ~64% of what men earned. By 2022, that increased to ~78%."
   });

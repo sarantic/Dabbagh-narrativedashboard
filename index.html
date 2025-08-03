@@ -736,6 +736,21 @@ function scene2() {
     showTrendLines: false
 
   });
+  d3.select("#vis")
+      .append("div")
+      .attr("class", "scene2-text")
+      .style("margin-top", "20px")
+      .style("max-width", "600px")
+      .style("margin-left", "auto")
+      .style("margin-right", "auto")
+      .style("font-size", "20px")
+      .style("color", "#333")
+      .html(`
+        <p>s From the 1970s through 2014, the wage gap steadily narrowed; it reached its lowest point in 2014 at just <strong>$5.63</strong>. 
+        This marked a milestone in wage equality between men and women.</p>
+        <p>However, progress slowed after 2014, and by 2022, the wage gap had widened again to <strong>$7.96</strong>. 
+        What does this say about where wage equality has been heading in recent years?</p>
+      `);
 
   setTimeout(() => {
     const svg = d3.select("#vis svg");
@@ -802,21 +817,6 @@ function scene2() {
 
   }, 2200); // Waits for animation to complete
     // Add supporting narrative text below chart
-    d3.select("#vis")
-      .append("div")
-      .attr("class", "scene2-text")
-      .style("margin-top", "20px")
-      .style("max-width", "600px")
-      .style("margin-left", "auto")
-      .style("margin-right", "auto")
-      .style("font-size", "20px")
-      .style("color", "#333")
-      .html(`
-        <p>s From the 1970s through 2014, the wage gap steadily narrowed; it reached its lowest point in 2014 at just <strong>$5.63</strong>. 
-        This marked a milestone in wage equality between men and women.</p>
-        <p>However, progress slowed after 2014, and by 2022, the wage gap had widened again to <strong>$7.96</strong>. 
-        What does this say about where wage equality has been heading in recent years?</p>
-      `);
 }
 
 

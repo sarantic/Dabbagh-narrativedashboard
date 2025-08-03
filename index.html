@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Median & Average Wages (1973–2022)</title>
+  <title> Close That Gap (data from 1973–2022)</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="javascript/tooltip.js"></script>
   <script src="https://unpkg.com/d3-svg-annotation@2.5.1/d3-annotation.min.js"></script>
@@ -84,13 +84,14 @@
   </style>
 </head>
 <body>
-  <h1>Median & Average Hourly Wages in the U.S. (1973–2022)</h1>
+  <h1>Close That Gap </h1>
+  <h3>(data from 1973-2022)</h3>
 
   <div id="vis"></div>
 
   <div>
-    <button onclick="prevScene()">Previous</button>
-    <button onclick="nextScene()">Next</button>
+    <button onclick="prevScene()">←</button>
+    <button onclick="nextScene()">→</button>
   </div>
 
   <script>
@@ -516,7 +517,7 @@ function scene2() {
     annotationYear: null,
     highlightYears: [2014, 2022],
     title: "Wage Gap Reached Its Narrowest Point Around 2014",
-    annotationText: "By 2014, the gap had narrowed to just $5.63 — but widened slightly by 2022.",
+    annotationText: "By 2014, the gap had narrowed to just $5.63, but widened slightly by 2022.",
     showTrendLines: false
 
   });
@@ -795,7 +796,7 @@ function scene4() {
       <h2>As of 2022: The Wage Gap Persists</h2>
       <p>Despite steady growth in women’s wages, <strong>men still earn more on average</strong>.
          In 2022, the average hourly wage for men was <strong>$35.82</strong>, while for women it was <strong>$27.86</strong>.</p>
-      <p>This reflects a wage gap of <strong>$7.96</strong>, or <strong>22%</strong> — a persistent gap that has <em>widened</em> slightly since its lowest point in 2014.</p>
+      <p>This reflects a wage gap of <strong>$7.96</strong>, or <strong>22%</strong>, a persistent gap that has <em>widened</em> slightly since its lowest point in 2014.</p>
     `);
 
   // Bar chart dimensions
@@ -876,6 +877,75 @@ function scene4() {
     .attr("text-anchor", "middle")
     .style("fill", "#555")
     .text("In 2022, women earned 78% of what men earned");
+
+  // Button to drill down into 2024 stats
+container.append("div")
+  .style("margin-top", "20px")
+  .append("button")
+  .text("Curious about recent data?")
+  .style("background-color", "#dbb286")
+  .style("color", "white")
+  .style("border", "none")
+  .style("padding", "10px 20px")
+  .style("font-size", "16px")
+  .style("border-radius", "5px")
+  .on("click", showRecentStats);
+
+}
+function showRecentStats() {
+  d3.select("#vis").html(""); // Clear current scene
+
+  const container = d3.select("#vis")
+    .append("div")
+    .attr("class", "scene4-update");
+
+  container.append("h2")
+    .text("Where Are We Now? (as of 2024 data)");
+
+  container.append("p")
+    .html(`
+      In <strong>2024</strong>, women earned <strong>83.6%</strong> of what men earned, a slight improvement from <strong>77.8%</strong> in 2022.
+    `);
+
+  container.append("p")
+    .html(`
+      Among <strong>younger workers (ages 25–34)</strong>, the wage gap is narrower: women earned <strong>95¢</strong> for every dollar earned by men.
+    `);
+
+  container.append("p")
+    .style("margin-top", "15px")
+    .style("font-style", "italic")
+    .style("color", "#555")
+    .text("Progress continues slowly, but younger generations show signs of a more equitable future.");
+
+  // IMAGE SECTION
+  container.append("img")
+    .attr("src", "images/e78c6b20-9d2d-43a3-ac11-75407a57b68b.png")
+    .attr("alt", "Wage gap visual comparison")
+    .style("margin-top", "30px")
+    .style("max-width", "100%")
+    .style("height", "auto");
+
+  // CITATION
+  container.append("p")
+    .style("margin-top", "25px")
+    .style("font-size", "12px")
+    .style("color", "#777")
+    .html(`Source: <a href="https://www.equalpaytoday.org/gender-pay-gap-statistics/" target="_blank" style="color:#2a6786; text-decoration:underline;">Equal Pay Today – Gender Pay Gap Statistics</a>`);
+
+
+  // BACK BUTTON
+  container.append("div")
+    .style("margin-top", "30px")
+    .append("button")
+    .text("Back to 2022 View")
+    .style("background-color", "#dbb286")
+    .style("color", "white")
+    .style("border", "none")
+    .style("padding", "10px 20px")
+    .style("font-size", "16px")
+    .style("border-radius", "5px")
+    .on("click", scene4); // return to the original scene
 }
 
 

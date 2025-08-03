@@ -40,6 +40,12 @@
     button:hover {
       background-color: #f7f5e8;
     }
+    .tooltip {
+  font-size: 13px;
+  color: #333;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
   </style>
 </head>
 <body>
@@ -56,8 +62,6 @@
     var sceneIndex = 0;
     var scenes = [scene1, scene2, scene3, scene4];
     var wageData = [];
-    var tooltip = floatingTooltip("tooltip", 160);
-
 
 
    async function init() {
@@ -90,180 +94,191 @@
       scenes[sceneIndex]();
     }
 
+
 function renderChart(trigger) {
   d3.select("#vis").html("");
 
-  var svg = d3.select("#vis").append("svg")
-              .attr("width", 700)
-              .attr("height", 400)
-              .style("font-family", "Inter, sans-serif");
+  const svgWidth = 700;
+  const svgHeight = 400;
+  const margin = { top: 50, right: 20, bottom: 40, left: 60 };
+  const width = svgWidth - margin.left - margin.right;
+  const height = svgHeight - margin.top - margin.bottom;
 
+  const svg = d3.select("#vis")
+    .append("svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight)
+    .style("font-family", "Inter, sans-serif");
 
-  var margin = {top: 50, right: 20, bottom: 40, left: 60};
-  var width = 700 - margin.left - margin.right;
-  var height = 400 - margin.top - margin.bottom;
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
+  const data = window.wageData;
+  data.sort((a, b) => a.year - b.year);
 
-  var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  const x = d3.scaleLinear()
+    .domain(d3.extent(data, d => d.year))
+    .range([0, width]);
 
-  var data = window.wageData;
-  data.sort(function(a, b) { return a.year - b.year; });
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(data, d => Math.max(d.men_average, d.women_average))])
+    .range([height, 0]);
 
-  var x = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) { return d.year; }))
-            .range([0, width]);
+  const menLine = d3.line()
+    .x(d => x(d.year))
+    .y(d => y(d.men_average));
 
-  var y = d3.scaleLinear()
-            .domain([0, d3.max(data, function(d) { return Math.max(d.men_average, d.women_average); })])
-            .range([height, 0]);
+  const womenLine = d3.line()
+    .x(d => x(d.year))
+    .y(d => y(d.women_average));
 
-  var menLine = d3.line()
-                  .x(function(d) { return x(d.year); })
-                  .y(function(d) { return y(d.men_average); });
+  const menPath = g.append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 4)
+    .attr("d", menLine);
 
-  var womenLine = d3.line()
-                    .x(function(d) { return x(d.year); })
-                    .y(function(d) { return y(d.women_average); });
+  const womenPath = g.append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "orange")
+    .attr("stroke-width", 4)
+    .attr("d", womenLine);
 
-  var menPath = g.append("path")
-                .datum(data)
-                .attr("fill", "none")
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 4)
-                .attr("d", menLine);
-
-  var womenPath = g.append("path")
-                .datum(data)
-                .attr("fill", "none")
-                .attr("stroke", "orange")
-                .attr("stroke-width", 4)
-                .attr("d", womenLine);
-
-  // Animation
   if (trigger.animate) {
-    [menPath, womenPath].forEach(function(path) {
-      var length = path.node().getTotalLength();
+    [menPath, womenPath].forEach(path => {
+      const length = path.node().getTotalLength();
       path.attr("stroke-dasharray", length + " " + length)
           .attr("stroke-dashoffset", length)
-          .transition().duration(2000).attr("stroke-dashoffset", 0);
+          .transition()
+          .duration(2000)
+          .attr("stroke-dashoffset", 0);
     });
   }
 
   // Axes
   g.append("g")
-    .attr("transform", "translate(0," + height + ")")
+    .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x).tickFormat(d3.format("d")));
 
-  g.append("g").call(d3.axisLeft(y));
+  g.append("g")
+    .call(d3.axisLeft(y));
 
-  
+  // Titles
   if (trigger.title) {
-  svg.append("text")
-     .attr("x", 350)
-     .attr("y", 20)
-     .attr("text-anchor", "middle")
-     .text(trigger.title)
-     .style("font-size", "16px");
-}
+    svg.append("text")
+      .attr("x", svgWidth / 2)
+      .attr("y", 20)
+      .attr("text-anchor", "middle")
+      .text(trigger.title)
+      .style("font-size", "16px");
+  }
 
-if (trigger.annotationText) {
-  svg.append("text")
-     .attr("x", 350)
-     .attr("y", 40)
-     .attr("text-anchor", "middle")
-     .text(trigger.annotationText)
-     .style("font-size", "12px")
-     .style("fill", "gray");
-}
+  if (trigger.annotationText) {
+    svg.append("text")
+      .attr("x", svgWidth / 2)
+      .attr("y", 40)
+      .attr("text-anchor", "middle")
+      .text(trigger.annotationText)
+      .style("font-size", "12px")
+      .style("fill", "gray");
+  }
 
+  // Tooltip overlay + logic
+  const focusLine = g.append("line")
+    .attr("stroke", "#aaa")
+    .attr("stroke-width", 1)
+    .attr("y1", 0)
+    .attr("y2", height)
+    .style("opacity", 0);
 
-  // Tooltip
-  var tooltip = d3.select("body").append("div")
-                  .attr("class", "tooltip")
-                  .style("position", "absolute")
-                  .style("padding", "8px")
-                  .style("background", "#fff")
-                  .style("border", "1px solid #ccc")
-                  .style("border-radius", "4px")
-                  .style("pointer-events", "none")
-                  .style("opacity", 0);
-  
+  const focusCircleMen = g.append("circle")
+    .attr("r", 4)
+    .attr("fill", "steelblue")
+    .style("opacity", 0);
 
-// Men data points
-g.selectAll(".dot-men")
-  .data(data)
-  .enter()
-  .append("circle")
-  .attr("class", "dot-men")
-  .attr("cx", function(d) { return x(d.year); })
-  .attr("cy", function(d) { return y(d.men_average); })
-  .attr("r", 4)
-  .attr("fill", "steelblue")
-  .on("mouseover", function(event, d) {
-    tooltip.showTooltip(`
-      <strong>Year:</strong> ${d.year}<br>
-      <strong>Men:</strong> $${d.men_average.toFixed(2)}
-    `, event);
-  })
-  .on("mousemove", function(event) {
-    tooltip.updatePosition(event);
-  })
-  .on("mouseout", function() {
-    tooltip.hideTooltip();
-  });
+  const focusCircleWomen = g.append("circle")
+    .attr("r", 4)
+    .attr("fill", "orange")
+    .style("opacity", 0);
 
-// Women data points
-g.selectAll(".dot-women")
-  .data(data)
-  .enter()
-  .append("circle")
-  .attr("class", "dot-women")
-  .attr("cx", function(d) { return x(d.year); })
-  .attr("cy", function(d) { return y(d.women_average); })
-  .attr("r", 4)
-  .attr("fill", "orange")
-  .on("mouseover", function(event, d) {
-    tooltip.showTooltip(`
-      <strong>Year:</strong> ${d.year}<br>
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("background", "#fff")
+    .style("padding", "8px")
+    .style("border", "1px solid #ccc")
+    .style("border-radius", "4px")
+    .style("opacity", 0)
+    .style("pointer-events", "none");
+
+  const bisect = d3.bisector(d => d.year).left;
+
+  function onMouseMove(event) {
+    const mouseX = d3.pointer(event)[0];
+    const yearEstimate = x.invert(mouseX);
+    const i = bisect(data, yearEstimate);
+    const d = data[i] || data[data.length - 1];
+
+    focusLine.attr("x1", x(d.year)).attr("x2", x(d.year)).style("opacity", 1);
+    focusCircleMen.attr("cx", x(d.year)).attr("cy", y(d.men_average)).style("opacity", 1);
+    focusCircleWomen.attr("cx", x(d.year)).attr("cy", y(d.women_average)).style("opacity", 1);
+
+    tooltip.html(`
+      <strong>Year:</strong> ${d.year}<br/>
+      <strong>Men:</strong> $${d.men_average.toFixed(2)}<br/>
       <strong>Women:</strong> $${d.women_average.toFixed(2)}
-    `, event);
-  })
-  .on("mousemove", function(event) {
-    tooltip.updatePosition(event);
-  })
-  .on("mouseout", function() {
-    tooltip.hideTooltip();
-  });
+    `)
+    .style("left", (event.pageX + 10) + "px")
+    .style("top", (event.pageY - 28) + "px")
+    .style("opacity", 1);
+  }
 
+  function onMouseOut() {
+    tooltip.style("opacity", 0);
+    focusLine.style("opacity", 0);
+    focusCircleMen.style("opacity", 0);
+    focusCircleWomen.style("opacity", 0);
+  }
 
+  g.append("rect")
+    .attr("class", "hover-overlay")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("fill", "none")
+    .attr("pointer-events", "all")
+    .on("mousemove", onMouseMove)
+    .on("mouseout", onMouseOut);
+
+  // Optional: Highlight specific years
   if (trigger.highlightYears) {
-  trigger.highlightYears.forEach(function(year) {
-    var point = data.find(function(d) { return d.year === year; });
-    if (point) {
-      g.append("circle")
-        .attr("cx", x(point.year))
-        .attr("cy", y(point.men_average))
-        .attr("r", 6)
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 2);
+    trigger.highlightYears.forEach(year => {
+      const point = data.find(d => d.year === year);
+      if (point) {
+        g.append("circle")
+          .attr("cx", x(point.year))
+          .attr("cy", y(point.men_average))
+          .attr("r", 6)
+          .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 2);
 
-      g.append("circle")
-        .attr("cx", x(point.year))
-        .attr("cy", y(point.women_average))
-        .attr("r", 6)
-        .attr("fill", "none")
-        .attr("stroke", "orange")
-        .attr("stroke-width", 2);
-    }
-  });
-}
+        g.append("circle")
+          .attr("cx", x(point.year))
+          .attr("cy", y(point.women_average))
+          .attr("r", 6)
+          .attr("fill", "none")
+          .attr("stroke", "orange")
+          .attr("stroke-width", 2);
+      }
+    });
+  }
 
-
-  // Trigger-based Annotation
+  // Optional: Annotation line between men/women
   if (trigger.annotationYear !== null) {
-    var focus = data.find(function(d) { return d.year === trigger.annotationYear; });
-
+    const focus = data.find(d => d.year === trigger.annotationYear);
     if (focus) {
       g.append("text")
         .attr("x", x(focus.year) + 10)
@@ -287,6 +302,9 @@ g.selectAll(".dot-women")
     }
   }
 }
+
+
+    
 
 function scene1() {
   d3.select("#vis").html("");

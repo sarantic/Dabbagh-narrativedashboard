@@ -59,15 +59,6 @@
   text-align: left;
   
 }
-.annotation-note-title {
-  font-weight: bold;
-  fill: #444;
-}
-
-.annotation-note-label {
-  fill: #666;
-  font-size: 12px;
-}
     .annotation-note-title {
   font-weight: bold;
   font-size: 14px;
@@ -81,9 +72,11 @@
     .annotation-note-bg {
   fill: white;
   stroke: none;
-  rx: 4; 
+  rx: 4;
   ry: 4;
+  filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.1));
 }
+
 
 
 
@@ -489,9 +482,9 @@ function scene2() {
   renderChart({
     animate: true,
     annotationYear: null,
-    highlightYears: [1973, 2022],
-    title: "Women's Wages Have Grown Steadily",
-    annotationText: "From $17.31 in 1973 to $27.86 in 2022 – a ~61% increase"
+    highlightYears: [2014, 2022],
+    title: "Wage Gap Reached Its Narrowest Point Around 2014",
+    annotationText: "By 2014, the gap had narrowed to just $5.63 — but widened slightly by 2022."
   });
 
   setTimeout(() => {
@@ -499,8 +492,8 @@ function scene2() {
     const g = svg.select("g");
 
     const data = window.wageData;
-    const width = 700 - 80 - 80;  // svg width - left/right margins
-    const height = 450 - 80 - 60; // svg height - top/bottom margins
+    const width = 800 - 80 - 100;
+    const height = 500 - 90 - 80;
 
     const x = d3.scaleLinear()
       .domain(d3.extent(data, d => d.year))
@@ -513,30 +506,30 @@ function scene2() {
     const annotations = [
       {
         note: {
-          title: "1973: $17.31",
-          label: "Starting point for women"
+          title: "2014: Wage Gap = $5.63",
+          label: "This was the smallest wage gap on record.",
         },
         connector: {
           end: "arrow",
           type: "elbow",
           lineType: "horizontal",
-          lineWidth: 2
+          lineWidth: 2,
         },
-        x: x(1973),
-        y: y(17.31),
-        dx: -10,
-        dy: -10
+        x: x(2014),
+        y: y(26.87), // women avg in 2014
+        dx: -80,
+        dy: -60
       },
       {
         note: {
-          title: "2022: $27.86",
-          label: "Women's wage grew ~61%"
+          title: "2022: Gap Widens Slightly",
+          label: "Despite progress, the gap increased again to $7.96.",
         },
         connector: {
           end: "arrow",
           type: "elbow",
           lineType: "horizontal",
-          lineWidth: 2
+          lineWidth: 2,
         },
         x: x(2022),
         y: y(27.86),
@@ -556,7 +549,7 @@ function scene2() {
       .attr("class", "scene2-annotations")
       .call(makeAnnotations);
 
-    // Add follow-up paragraph below chart
+    // Add supporting narrative text below chart
     d3.select("#vis")
       .append("div")
       .attr("class", "scene2-text")
@@ -564,15 +557,17 @@ function scene2() {
       .style("max-width", "600px")
       .style("margin-left", "auto")
       .style("margin-right", "auto")
-      .style("font-size", "20px")
+      .style("font-size", "16px")
       .style("color", "#333")
       .html(`
-        <p>From 1973 to 2022, women’s wages grew by nearly <strong>61%</strong> — a faster rate than men’s wages over the same period.
-        This growth helped narrow the wage gap significantly, especially during the 1990s and early 2000s.</p>
-        <p>Still, the story of progress is incomplete without understanding where we are now. Let's take a closer look in the next slide.</p>
+        <p>From the 1970s through 2014, the wage gap steadily narrowed — reaching its lowest point in 2014 at just <strong>$5.63</strong>. 
+        This marked a milestone in wage equity between men and women.</p>
+        <p>However, progress slowed after 2014, and by 2022, the wage gap had widened again to <strong>$7.96</strong>. 
+        This raises questions about the sustainability of progress and ongoing challenges in achieving true wage equity.</p>
       `);
-  }, 2200); // after line animation
+  }, 2200); // Waits for animation to complete
 }
+
 
 
 

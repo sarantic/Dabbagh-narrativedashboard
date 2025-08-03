@@ -192,22 +192,26 @@ if (showTrendLines) {
     .x(d => x(d.x))
     .y(d => y(d.y));
 
-  g.append("path")
-    .datum(menTrend)
-    .attr("d", trendLine)
-    .attr("stroke", "red")
-    .attr("stroke-width", 2)
-    .attr("stroke-dasharray", "5 5")
-    .attr("fill", "none");
+  [menTrend, womenTrend].forEach((trend, index) => {
+    const path = g.append("path")
+      .datum(trend)
+      .attr("d", trendLine)
+      .attr("stroke", "red")
+      .attr("stroke-width", 2)
+      .attr("stroke-dasharray", "5 5")
+      .attr("fill", "none");
 
-  g.append("path")
-    .datum(womenTrend)
-    .attr("d", trendLine)
-    .attr("stroke", "red")
-    .attr("stroke-width", 2)
-    .attr("stroke-dasharray", "5 5")
-    .attr("fill", "none");
+    // Animation
+    const length = path.node().getTotalLength();
+    path.attr("stroke-dasharray", length + " " + length)
+        .attr("stroke-dashoffset", length)
+        .transition()
+        .duration(1500)
+        .delay(1000)  // 1s delay
+        .attr("stroke-dashoffset", 0);
+  });
 }
+
 
 
 
@@ -638,8 +642,8 @@ function scene3() {
     .style("font-size", "16px")
     .style("color", "#333")
     .html(`
-      <p>Though both men's and women's wages have risen steadily, they’ve largely grown in parallel; this may be worrying if women's wages aren't looking as though they'll catch up to men's anytime soon.
-      The red trendlines show the wage gap isn't closing significantly over time. Decade-by-decade, we don't see the gap closing together.</p>
+      <p>Though both men's and women's wages have risen steadily, they’ve mostly grown in parallel. While women's wages increase, the gap doesn't follow in decreasing.
+      The red trendlines show the wage gap isn't closing significantly over time. Decade-by-decade, men continue to make a notably larger average wage.</p>
 
     `);
 }

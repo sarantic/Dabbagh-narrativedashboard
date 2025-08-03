@@ -78,6 +78,13 @@
   fill: #555;
   font-size: 12px;
 }
+    .annotation-note-bg {
+  fill: white;
+  stroke: none;
+  rx: 4; 
+  ry: 4;
+}
+
 
 
 
@@ -517,8 +524,8 @@ function scene2() {
         },
         x: x(1973),
         y: y(17.31),
-        dx: -70,
-        dy: -50
+        dx: -10,
+        dy: -10
       },
       {
         note: {
@@ -557,7 +564,7 @@ function scene2() {
       .style("max-width", "600px")
       .style("margin-left", "auto")
       .style("margin-right", "auto")
-      .style("font-size", "16px")
+      .style("font-size", "20px")
       .style("color", "#333")
       .html(`
         <p>From 1973 to 2022, women’s wages grew by nearly <strong>61%</strong> — a faster rate than men’s wages over the same period.

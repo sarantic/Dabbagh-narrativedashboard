@@ -138,6 +138,7 @@ function renderChart(trigger) {
   var margin = { top: 90, right: 100, bottom: 80, left: 80 };
 var width = 800 - margin.left - margin.right;
 var height = 500 - margin.top - margin.bottom;
+   const showTrendLines = trigger.showTrendLines ?? false;
 
 
 
@@ -183,28 +184,31 @@ var height = 500 - margin.top - margin.bottom;
     .attr("stroke-width", 4)
     .attr("d", womenLine);
   // Draw trend lines (dotted red)
-const menTrend = getTrendLine(data, d => d.year, d => d.men_average);
-const womenTrend = getTrendLine(data, d => d.year, d => d.women_average);
+if (showTrendLines) {
+  const menTrend = getTrendLine(data, d => d.year, d => d.men_average);
+  const womenTrend = getTrendLine(data, d => d.year, d => d.women_average);
 
-const trendLine = d3.line()
-  .x(d => x(d.x))
-  .y(d => y(d.y));
+  const trendLine = d3.line()
+    .x(d => x(d.x))
+    .y(d => y(d.y));
 
-g.append("path")
-  .datum(menTrend)
-  .attr("d", trendLine)
-  .attr("stroke", "red")
-  .attr("stroke-width", 2)
-  .attr("stroke-dasharray", "5 5")
-  .attr("fill", "none");
+  g.append("path")
+    .datum(menTrend)
+    .attr("d", trendLine)
+    .attr("stroke", "red")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", "5 5")
+    .attr("fill", "none");
 
-g.append("path")
-  .datum(womenTrend)
-  .attr("d", trendLine)
-  .attr("stroke", "red")
-  .attr("stroke-width", 2)
-  .attr("stroke-dasharray", "5 5")
-  .attr("fill", "none");
+  g.append("path")
+    .datum(womenTrend)
+    .attr("d", trendLine)
+    .attr("stroke", "red")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", "5 5")
+    .attr("fill", "none");
+}
+
 
 
   if (trigger.animate) {
@@ -508,7 +512,9 @@ function scene2() {
     annotationYear: null,
     highlightYears: [2014, 2022],
     title: "Wage Gap Reached Its Narrowest Point Around 2014",
-    annotationText: "By 2014, the gap had narrowed to just $5.63 — but widened slightly by 2022."
+    annotationText: "By 2014, the gap had narrowed to just $5.63 — but widened slightly by 2022.",
+    showTrendLines: false
+
   });
 
   setTimeout(() => {
@@ -557,7 +563,7 @@ function scene2() {
     },
     x: x(2022),
     y: y(27.86), // still referencing women's avg
-    dx: 60,
+    dx: 30,
     dy: 60 // also below
   }
 ];
@@ -602,7 +608,9 @@ function scene3() {
     animate: false,
     annotationYear: null,
     title: "Men Still Earn More Than Women",
-    annotationText: "Despite progress, a substantial wage gap remains between men and women."
+    annotationText: "Despite progress, a substantial wage gap remains between men and women.",
+      showTrendLines: true
+
   });
 
   // Add drill-down button

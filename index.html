@@ -133,11 +133,12 @@
 function renderChart(trigger) {
   d3.select("#vis").html("");
 
-  const svgWidth = 700;
-  const svgHeight = 400;
-  var margin = { top: 80, right: 80, bottom: 60, left: 80 };
-var width = 700 - margin.left - margin.right;
-var height = 450 - margin.top - margin.bottom;
+  const svgWidth = 800;
+  const svgHeight = 500;
+  var margin = { top: 90, right: 100, bottom: 80, left: 80 };
+var width = 800 - margin.left - margin.right;
+var height = 500 - margin.top - margin.bottom;
+
 
 
   const svg = d3.select("#vis")
@@ -194,9 +195,14 @@ var height = 450 - margin.top - margin.bottom;
   }
 
   // Axes
-  g.append("g")
-    .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+ g.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x).tickFormat(d3.format("d")))
+  .selectAll("text")
+  .style("text-anchor", "middle")
+  .attr("dx", "0em")
+  .attr("dy", "1.5em")
+
 
   g.append("g")
     .call(d3.axisLeft(y));

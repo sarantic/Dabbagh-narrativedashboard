@@ -327,7 +327,7 @@ if (showTrendLines) {
     .on("mousemove", onMouseMove)
     .on("mouseout", onMouseOut);
 
-  // Optional: Highlight specific years
+  // Highlight specific years
   if (trigger.highlightYears) {
     trigger.highlightYears.forEach(year => {
       const point = data.find(d => d.year === year);
@@ -351,7 +351,7 @@ if (showTrendLines) {
     });
   }
 
-  // Optional: Annotation line between men/women
+  //Annotation line between men/women
   if (trigger.annotationYear !== null) {
     const focus = data.find(d => d.year === trigger.annotationYear);
     if (focus) {
@@ -376,6 +376,44 @@ if (showTrendLines) {
         .attr("stroke-dasharray", "4 2");
     }
   }
+  // TRIGGER FOR SCENE 3
+   if (trigger.scene === 3) {
+    const annotation = d3.annotation()
+      .type(d3.annotationLabel)
+      .accessors({ x: d => x(d.year), y: d => y(d.value) })
+      .annotations([
+        {
+          note: {
+            title: "Parallel Growth",
+            label: "The gap inches smaller, but lines remain largely parallel."
+          },
+          connector: {
+            end: "arrow",
+            type: "elbow",
+            lineType: "horizontal",
+            lineWidth: 2,
+            color: "darkred"
+          },
+          color: ["darkred"],
+          year: 2022,
+          value: 27.0,
+          dx: -100,
+          dy: 60
+        }
+      ]);
+
+    g.append("g")
+      .attr("class", "scene3-arrow-annotation")
+      .style("opacity", 0)
+      .call(annotation)
+      .transition()
+      .delay(2200)
+      .duration(600)
+      .style("opacity", 1);
+  }
+
+
+  
 }
 
 
@@ -790,49 +828,10 @@ function scene3() {
     annotationYear: null,
     title: "Men Still Earn More Than Women",
     annotationText: "Despite progress, a notable wage gap remains between men and women.",
-      showTrendLines: true
+    showTrendLines: true,
+    scene:3;
 
   });
-
-  setTimeout(() => {
-  const finalAnnotation = [
-    {
-      note: {
-        title: "Parallel Growth, Persistent Gap",
-        label: "Men's and women's wages rise together, but the gap persists year after year.",
-        align: "middle",
-        orientation: "leftRight"
-      },
-      connector: {
-        end: "arrow",
-        type: "elbow",
-        lineType: "horizontal",
-        lineWidth: 2,
-        color: "darkred"
-      },
-      x: x(2022),       // near end of graph
-      y: y(27),         // just below women's line (e.g., 27.86)
-      dx: -100,
-      dy: 60
-    }
-  ];
-
-  const makeFinal = d3.annotation()
-    .type(d3.annotationLabel)
-    .annotations(finalAnnotation)
-    .accessors({ x: d => d.x, y: d => d.y })
-    .textWrap(160)
-    .notePadding(10);
-
-  g.append("g")
-    .attr("class", "scene3-end-annotation")
-    .style("opacity", 0)
-    .call(makeFinal)
-    .transition()
-    .duration(500)
-    .style("opacity", 1);
-}, 2200); // Trigger after red lines animate
-
 
 
   //  drill-down button
@@ -867,6 +866,9 @@ buttonContainer
 
     `);
 }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    
 function computeDecadeAverages(data) {
   const buckets = {
     "1970s": [],

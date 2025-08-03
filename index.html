@@ -182,6 +182,30 @@ var height = 500 - margin.top - margin.bottom;
     .attr("stroke", "orange")
     .attr("stroke-width", 4)
     .attr("d", womenLine);
+  // Draw trend lines (dotted red)
+const menTrend = getTrendLine(data, d => d.year, d => d.men_average);
+const womenTrend = getTrendLine(data, d => d.year, d => d.women_average);
+
+const trendLine = d3.line()
+  .x(d => x(d.x))
+  .y(d => y(d.y));
+
+g.append("path")
+  .datum(menTrend)
+  .attr("d", trendLine)
+  .attr("stroke", "red")
+  .attr("stroke-width", 2)
+  .attr("stroke-dasharray", "5 5")
+  .attr("fill", "none");
+
+g.append("path")
+  .datum(womenTrend)
+  .attr("d", trendLine)
+  .attr("stroke", "red")
+  .attr("stroke-width", 2)
+  .attr("stroke-dasharray", "5 5")
+  .attr("fill", "none");
+
 
   if (trigger.animate) {
     [menPath, womenPath].forEach(path => {
@@ -606,10 +630,9 @@ function scene3() {
     .style("font-size", "16px")
     .style("color", "#333")
     .html(`
-      <p>Even after decades of progress, men still earn more than women. 
-      In 1973, the gap was <strong>$9.65</strong>. In 2022, the gap remained at <strong>$7.96</strong>.</p>
-      <p>This persistent disparity shows that wage equity has improved, 
-      but parity remains an ongoing challenge.</p>
+      <p>Though both men's and women's wages have risen steadily, they’ve largely grown in parallel; this may be worrying if women's wages aren't looking as though they'll catch up to men's anytime soon.
+      The red trendlines show the wage gap isn't closing significantly over time. Decade-by-decade, we don't see the gap closing together.</p>
+
     `);
 }
 function computeDecadeAverages(data) {
@@ -720,6 +743,27 @@ function showDecadeDrilldown() {
     .style("border-radius", "5px")
     .style("cursor", "pointer")
     .on("click", scene3);
+}
+function getTrendLine(data, accessorX, accessorY) {
+  const xSeries = data.map(accessorX);
+  const ySeries = data.map(accessorY);
+  const n = xSeries.length;
+
+  const xMean = d3.mean(xSeries);
+  const yMean = d3.mean(ySeries);
+
+  const slope = d3.sum(xSeries.map((x, i) => (x - xMean) * (ySeries[i] - yMean))) /
+                d3.sum(xSeries.map(x => (x - xMean) ** 2));
+
+  const intercept = yMean - slope * xMean;
+
+  const xMin = d3.min(xSeries);
+  const xMax = d3.max(xSeries);
+
+  return [
+    { x: xMin, y: slope * xMin + intercept },
+    { x: xMax, y: slope * xMax + intercept }
+  ];
 }
 
 

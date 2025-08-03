@@ -29,13 +29,13 @@
     }
 
     button {
-      background-color: #dbb286;
+      background-color: #2a6786;
       color: white;
       border: none;
       border-radius: 5px;
       padding: 10px 20px;
       margin: 10px;
-      font-size: 16px;
+      font-size: 20px;
     }
 
     button:hover {
@@ -84,8 +84,8 @@
   </style>
 </head>
 <body>
-  <h1>Close That Gap </h1>
-  <h3>(data from 1973-2022)</h3>
+  <h1>Close That [wage] Gap! </h1>
+  <h3>(Average Hourly Wages by Gender (USA, 1973-2022))</h3>
 
   <div id="vis"></div>
 
@@ -593,7 +593,7 @@ function scene2() {
       .style("max-width", "600px")
       .style("margin-left", "auto")
       .style("margin-right", "auto")
-      .style("font-size", "16px")
+      .style("font-size", "20px")
       .style("color", "#333")
       .html(`
         <p>From the 1970s through 2014, the wage gap steadily narrowed; it reached its lowest point in 2014 at just <strong>$5.63</strong>. 
@@ -641,11 +641,12 @@ function scene3() {
     .style("max-width", "600px")
     .style("margin-left", "auto")
     .style("margin-right", "auto")
-    .style("font-size", "16px")
+    .style("font-size", "20px")
     .style("color", "#333")
     .html(`
-      <p>Though both men's and women's wages have risen steadily, they’ve mostly grown in parallel. While women's wages increase, the gap doesn't follow in decreasing.
-      The red trendlines show the wage gap isn't closing significantly over time. Decade-by-decade, men continue to make a notably larger average wage.</p>
+          <p>The red trendlines show the wage gap isn't closing significantly over time. Decade-by-decade, men continue to make a notably larger average wage.</p>
+
+      <p>Though both men's and women's wages have risen steadily, they’ve mostly grown in parallel. While women's wages increase, the gap doesn't follow in decreasing.</p>
 
     `);
 }

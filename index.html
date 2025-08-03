@@ -624,19 +624,25 @@ function scene3() {
 
   });
 
-  // Add drill-down button
-  d3.select("#vis")
-    .append("button")
-    .attr("id", "drillBtn")
-    .text("Explore Wage Gap by Decade")
-    .style("margin-top", "20px")
-    .style("padding", "10px 20px")
-    .style("background-color", "#dbb286")
-    .style("color", "white")
-    .style("border", "none")
-    .style("border-radius", "5px")
-    .style("cursor", "pointer")
-    .on("click", showDecadeDrilldown);
+  //  drill-down button
+  const buttonContainer = d3.select("#vis")
+  .append("div")
+  .style("display", "flex")
+  .style("justify-content", "center")
+  .style("margin-top", "20px");
+
+// the button inside the container
+buttonContainer
+  .append("button")
+  .attr("id", "drillBtn")
+  .text("Explore Wage Gap by Decade")
+  .style("padding", "10px 20px")
+  .style("background-color", "#dbb286")
+  .style("color", "white")
+  .style("border", "none")
+  .style("border-radius", "5px")
+  .style("cursor", "pointer")
+  .on("click", showDecadeDrilldown);
 
   // Bottom narrative
   d3.select("#vis")
@@ -751,18 +757,23 @@ function showDecadeDrilldown() {
     .style("font-weight", "bold");
 
   // Back button
-  d3.select("#vis")
-    .append("button")
-    .attr("id", "backBtn")
-    .text("← Back to Line Chart")
-    .style("margin-top", "20px")
-    .style("padding", "10px 20px")
-    .style("background-color", "#888")
-    .style("color", "white")
-    .style("border", "none")
-    .style("border-radius", "5px")
-    .style("cursor", "pointer")
-    .on("click", scene3);
+  const backBtnContainer = d3.select("#vis")
+  .append("div")
+  .style("display", "flex")
+  .style("justify-content", "center")
+  .style("margin-top", "20px");
+
+backBtnContainer
+  .append("button")
+  .attr("id", "backBtn")
+  .text("← Back to Line Chart")
+  .style("padding", "10px 20px")
+  .style("background-color", "#888")
+  .style("color", "white")
+  .style("border", "none")
+  .style("border-radius", "5px")
+  .style("cursor", "pointer")
+  .on("click", scene3);
 }
 function getTrendLine(data, accessorX, accessorY) {
   const xSeries = data.map(accessorX);

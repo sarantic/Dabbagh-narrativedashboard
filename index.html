@@ -572,14 +572,89 @@ function scene2() {
 
 
 
-function scene3() {
-  renderChart({
-    animate: false,
-    annotationYear: 2022,
-    title: "The Shrinking Wage Gap (1973 vs 2022)",
-    annotationText: "In 1973, women earned ~64% of what men earned. By 2022, that increased to ~78%."
-  });
+function showDecadeDrilldown() {
+  d3.select("#vis").html("");
+
+  const data = computeDecadeAverages(window.wageData);
+
+  const svg = d3.select("#vis")
+    .append("svg")
+    .attr("width", 700)
+    .attr("height", 450);
+
+  const margin = { top: 60, right: 30, bottom: 80, left: 70 },
+        width = 700 - margin.left - margin.right,
+        height = 450 - margin.top - margin.bottom;
+
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const x0 = d3.scaleBand()
+    .domain(data.map(d => d.decade))
+    .range([0, width])
+    .paddingInner(0.3);
+
+  const x1 = d3.scaleBand()
+    .domain(["men", "women"])
+    .range([0, x0.bandwidth()])
+    .padding(0.1);
+
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(data, d => Math.max(d.men, d.women)) + 5])
+    .range([height, 0]);
+
+  const color = d3.scaleOrdinal()
+    .domain(["men", "women"])
+    .range(["steelblue", "orange"]);
+
+  // Axes
+  g.append("g")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x0));
+
+  g.append("g").call(d3.axisLeft(y));
+
+  // Bars
+  g.selectAll(".bar-group")
+    .data(data.flatMap(d => [
+      { group: "men", value: d.men, decade: d.decade },
+      { group: "women", value: d.women, decade: d.decade }
+    ]))
+    .enter()
+    .append("rect")
+    .attr("x", d => x0(d.decade) + x1(d.group))
+    .attr("width", x1.bandwidth())
+    .attr("y", height)
+    .attr("height", 0)
+    .attr("fill", d => color(d.group))
+    .transition().duration(1000)
+    .attr("y", d => y(d.value))
+    .attr("height", d => height - y(d.value));
+
+  // Title
+  svg.append("text")
+    .attr("x", 350)
+    .attr("y", 30)
+    .attr("text-anchor", "middle")
+    .text("Average Wages by Decade")
+    .style("font-size", "16px")
+    .style("font-weight", "bold");
+
+  // Back button
+  d3.select("#vis")
+    .append("button")
+    .attr("id", "backBtn")
+    .text("← Back to Line Chart")
+    .style("margin-top", "20px")
+    .style("padding", "10px 20px")
+    .style("background-color", "#888")
+    .style("color", "white")
+    .style("border", "none")
+    .style("border-radius", "5px")
+    .style("cursor", "pointer")
+    .on("click", scene3);
 }
+
 
 function scene4() {
   

@@ -793,47 +793,46 @@ function scene3() {
       showTrendLines: true
 
   });
-  // Create group for annotation
-const annotationGroup = g.append("g")
-  .attr("opacity", 0);  // Initially hidden
 
-// Add red arrow text
-annotationGroup.append("text")
-  .attr("x", width - 100)
-  .attr("y", y(21))
-  .attr("fill", "darkred")
-  .style("font-size", "12px")
-  .style("font-weight", "bold")
-  .text("Wages grow in parallel, but the gap stays");
+  setTimeout(() => {
+  const finalAnnotation = [
+    {
+      note: {
+        title: "Parallel Growth, Persistent Gap",
+        label: "Men's and women's wages rise together, but the gap persists year after year.",
+        align: "middle",
+        orientation: "leftRight"
+      },
+      connector: {
+        end: "arrow",
+        type: "elbow",
+        lineType: "horizontal",
+        lineWidth: 2,
+        color: "darkred"
+      },
+      x: x(2022),       // near end of graph
+      y: y(27),         // just below women's line (e.g., 27.86)
+      dx: -100,
+      dy: 60
+    }
+  ];
 
-// Add red arrow line
-annotationGroup.append("line")
-  .attr("x1", width - 150)
-  .attr("y1", y(22))
-  .attr("x2", width - 100)
-  .attr("y2", y(25))
-  .attr("stroke", "red")
-  .attr("stroke-width", 2)
-  .attr("marker-end", "url(#arrow)");
+  const makeFinal = d3.annotation()
+    .type(d3.annotationLabel)
+    .annotations(finalAnnotation)
+    .accessors({ x: d => d.x, y: d => d.y })
+    .textWrap(160)
+    .notePadding(10);
 
-// Arrow marker (place this in your svg <defs> if not already added)
-svg.append("defs").append("marker")
-  .attr("id", "arrow")
-  .attr("viewBox", "0 0 10 10")
-  .attr("refX", 5)
-  .attr("refY", 5)
-  .attr("markerWidth", 6)
-  .attr("markerHeight", 6)
-  .attr("orient", "auto-start-reverse")
-  .append("path")
-  .attr("d", "M 0 0 L 10 5 L 0 10 z")
-  .attr("fill", "red");
+  g.append("g")
+    .attr("class", "scene3-end-annotation")
+    .style("opacity", 0)
+    .call(makeFinal)
+    .transition()
+    .duration(500)
+    .style("opacity", 1);
+}, 2200); // Trigger after red lines animate
 
-// Fade in after red lines (e.g., after 1500ms)
-annotationGroup.transition()
-  .delay(1600)
-  .duration(1000)
-  .attr("opacity", 1);
 
 
   //  drill-down button

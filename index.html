@@ -606,13 +606,14 @@ function scene2() {
 
 
 function scene3() {
-  d3.select("#vis").html("");
+   d3.select("#vis").html("");
+  d3.select("#annotation-text").html("");
 
   renderChart({
     animate: false,
     annotationYear: null,
     title: "Men Still Earn More Than Women",
-    annotationText: "Despite progress, a substantial wage gap remains between men and women.",
+    annotationText: "Despite progress, a notable wage gap remains between men and women.",
       showTrendLines: true
 
   });

@@ -10,7 +10,7 @@ body {
 
 /* Header style */
 h1 {
-  color: #ff7b00; /* vibrant orange */
+  color: #2a6786; /*bluee */
   font-size: 2em;
   margin-bottom: 20px;
 }
@@ -33,7 +33,7 @@ h1 {
 }
 
 button {
-  background: #ff7b00; /* orange */
+  background: #dbb286; /* orange */
   color: #fff;
   border: none;
   padding: 12px 24px;

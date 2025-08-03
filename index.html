@@ -490,13 +490,8 @@ const disparityBtn1973 = container.append("div")
 
 disparityBtn1973.append("button")
   .attr("id", "raceDrillBtn1973")
+  .attr("class", "custom-btn")
   .text("Disparities by Race in 1973")
-  .style("padding", "10px 20px")
-  .style("background-color", "#d3d3d3")
-  .style("color", "white")
-  .style("border", "none")
-  .style("border-radius", "5px")
-  .style("cursor", "pointer")
   .on("click", showRaceDisparity);
 
 
@@ -595,14 +590,9 @@ disparityBtn1973.append("button")
     .style("margin-top", "20px");
 
   back.append("button")
-    .text("←")
-    .style("padding", "10px 20px")
-    .style("background-color", "#888")
-    .style("color", "white")
-    .style("border", "none")
-    .style("border-radius", "5px")
-    .style("cursor", "pointer")
-    .on("click", scene1);
+  .attr("class", "custom-btn") // use class instead of inline styles
+  .text("←")
+  .on("click", scene1);
 }
     function showRaceDisparity2022() {
   d3.select("#vis").html(""); // Clear content
@@ -803,6 +793,48 @@ function scene3() {
       showTrendLines: true
 
   });
+  // Create group for annotation
+const annotationGroup = g.append("g")
+  .attr("opacity", 0);  // Initially hidden
+
+// Add red arrow text
+annotationGroup.append("text")
+  .attr("x", width - 100)
+  .attr("y", y(21))
+  .attr("fill", "darkred")
+  .style("font-size", "12px")
+  .style("font-weight", "bold")
+  .text("Wages grow in parallel, but the gap stays");
+
+// Add red arrow line
+annotationGroup.append("line")
+  .attr("x1", width - 150)
+  .attr("y1", y(22))
+  .attr("x2", width - 100)
+  .attr("y2", y(25))
+  .attr("stroke", "red")
+  .attr("stroke-width", 2)
+  .attr("marker-end", "url(#arrow)");
+
+// Arrow marker (place this in your svg <defs> if not already added)
+svg.append("defs").append("marker")
+  .attr("id", "arrow")
+  .attr("viewBox", "0 0 10 10")
+  .attr("refX", 5)
+  .attr("refY", 5)
+  .attr("markerWidth", 6)
+  .attr("markerHeight", 6)
+  .attr("orient", "auto-start-reverse")
+  .append("path")
+  .attr("d", "M 0 0 L 10 5 L 0 10 z")
+  .attr("fill", "red");
+
+// Fade in after red lines (e.g., after 1500ms)
+annotationGroup.transition()
+  .delay(1600)
+  .duration(1000)
+  .attr("opacity", 1);
+
 
   //  drill-down button
   const buttonContainer = d3.select("#vis")
@@ -815,13 +847,8 @@ function scene3() {
 buttonContainer
   .append("button")
   .attr("id", "drillBtn")
+  .attr("class", "custom-btn")
   .text("Explore Wage Gap by Decade")
-  .style("padding", "10px 20px")
-  .style("background-color", "#dbb286")
-  .style("color", "white")
-  .style("border", "none")
-  .style("border-radius", "5px")
-  .style("cursor", "pointer")
   .on("click", showDecadeDrilldown);
 
   // Bottom narrative
@@ -946,15 +973,11 @@ function showDecadeDrilldown() {
 backBtnContainer
   .append("button")
   .attr("id", "backBtn")
-  .text("← Back to Line Chart")
-  .style("padding", "10px 20px")
-  .style("background-color", "#888")
-  .style("color", "white")
-  .style("border", "none")
-  .style("border-radius", "5px")
-  .style("cursor", "pointer")
+  .attr("class", "custom-btn")
+  .text("←")
   .on("click", scene3);
 }
+    ////////////////////////////////////////////////////////
 function getTrendLine(data, accessorX, accessorY) {
   const xSeries = data.map(accessorX);
   const ySeries = data.map(accessorY);
@@ -1080,32 +1103,21 @@ function scene4() {
 const buttonGroup = container.append("div")
   .style("display", "flex")
   .style("justify-content", "center")
-  .style("gap", "12px")  // space between buttons
+  .style("gap", "12px")
   .style("margin-top", "20px")
-  .style("flex-wrap", "wrap"); // optional: wrap buttons if screen is small
+  .style("flex-wrap", "wrap");
 
 // Button 1 — Race disparity
 buttonGroup.append("button")
   .attr("id", "raceDrillBtn2022")
+  .attr("class", "custom-btn") // <-- Apply your CSS class
   .text("Disparities by Race in 2022")
-  .style("padding", "10px 20px")
-  .style("background-color", "#D3D3D3")
-  .style("color", "white")
-  .style("border", "none")
-  .style("border-radius", "5px")
-  .style("cursor", "pointer")
   .on("click", showRaceDisparity2022);
 
 // Button 2 — 2024 stats
 buttonGroup.append("button")
+  .attr("class", "custom-btn") // <-- Apply your CSS class
   .text("Curious about recent data?")
-  .style("background-color", "#D3D3D3")
-  .style("color", "white")
-  .style("border", "none")
-  .style("padding", "10px 20px")
-  .style("font-size", "16px")
-  .style("border-radius", "5px")
-  .style("cursor", "pointer")
   .on("click", showRecentStats);
 
 

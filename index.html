@@ -52,7 +52,7 @@
 
   <script>
     var sceneIndex = 0;
-    var scenes = [scene1, scene2];
+    var scenes = [scene1, scene2, scene3, scene4];
     var wageData = [];
 
    async function init() {
@@ -84,77 +84,134 @@
       scenes[sceneIndex]();
     }
 
-    function scene1() {
-      d3.select("#vis").html("");
-      d3.select("#vis")
-        .append("div")
-        .attr("class", "intro-text")
-        .html("<h2>Explore Wage Trends</h2><p>How have median and average wages changed from 1973 to 2022?</p><p>Click next to begin your journey.</p>");
-    }
+function renderChart(trigger) {
+  d3.select("#vis").html(""); 
 
-   function scene2() {
-      d3.select("#vis").html(""); 
-    
-      var svg = d3.select("#vis").append("svg")
-                  .attr("width", 700)
-                  .attr("height", 400);
-    
-      var margin = {top: 50, right: 20, bottom: 40, left: 60};
-      var width = 700 - margin.left - margin.right;
-      var height = 400 - margin.top - margin.bottom;
-    
-      var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
-      var data = window.wageData;
-    
-      var x = d3.scaleLinear()
-                .domain(d3.extent(data, function(d) { return d.year; }))
-                .range([0, width]);
-    
-      var y = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d) { return Math.max(d.men_average, d.women_average); })])
-                .range([height, 0]);
-    
-      var menLine = d3.line()
-                      .x(function(d) { return x(d.year); })
-                      .y(function(d) { return y(d.men_average); });
-    
-      var womenLine = d3.line()
-                        .x(function(d) { return x(d.year); })
-                        .y(function(d) { return y(d.women_average); });
-    
-      g.append("path")
-       .datum(data)
-       .attr("fill", "none")
-       .attr("stroke", "steelblue")
-       .attr("stroke-width", 2)
-       .attr("d", menLine);
-    
-      g.append("path")
-       .datum(data)
-       .attr("fill", "none")
-       .attr("stroke", "orange")
-       .attr("stroke-width", 2)
-       .attr("d", womenLine);
-    
-      // Axes
-      g.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).tickFormat(d3.format("d")));
-    
-      g.append("g")
-        .call(d3.axisLeft(y));
-    
-      // Titles
-      svg.append("text")
-         .attr("x", 350)
-         .attr("y", 20)
-         .attr("text-anchor", "middle")
-         .text("Men's vs Women's Average Wages (1973–2022)")
-         .style("font-size", "16px");
-    
-      // OPTIONAL: Tooltip + Annotations can be added next using d3-annotation or plain SVG
+  var svg = d3.select("#vis").append("svg")
+              .attr("width", 700)
+              .attr("height", 400);
+
+  var margin = {top: 50, right: 20, bottom: 40, left: 60};
+  var width = 700 - margin.left - margin.right;
+  var height = 400 - margin.top - margin.bottom;
+
+  var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var data = window.wageData;
+
+  var x = d3.scaleLinear()
+            .domain(d3.extent(data, function(d) { return d.year; }))
+            .range([0, width]);
+
+  var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) { return Math.max(d.men_average, d.women_average); })])
+            .range([height, 0]);
+
+  var menLine = d3.line()
+                  .x(function(d) { return x(d.year); })
+                  .y(function(d) { return y(d.men_average); });
+
+  var womenLine = d3.line()
+                    .x(function(d) { return x(d.year); })
+                    .y(function(d) { return y(d.women_average); });
+
+  // Optionally animate the line
+  var menPath = g.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "steelblue")
+                .attr("stroke-width", 2)
+                .attr("d", menLine);
+
+  var womenPath = g.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "orange")
+                .attr("stroke-width", 2)
+                .attr("d", womenLine);
+
+  if (trigger.animate) {
+    [menPath, womenPath].forEach(function(path) {
+      var length = path.node().getTotalLength();
+      path.attr("stroke-dasharray", length + " " + length)
+          .attr("stroke-dashoffset", length)
+          .transition().duration(2000).attr("stroke-dashoffset", 0);
+    });
+  }
+
+  // Axes
+  g.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+
+  g.append("g").call(d3.axisLeft(y));
+
+  // Title
+  svg.append("text")
+     .attr("x", 350)
+     .attr("y", 20)
+     .attr("text-anchor", "middle")
+     .text("Men's vs Women's Average Wages (1973–2022)")
+     .style("font-size", "16px");
+
+  // === Annotation Logic (trigger.annotationYear) ===
+  if (trigger.annotationYear !== null) {
+    var focus = data.find(function(d) { return d.year === trigger.annotationYear; });
+
+    if (focus) {
+      // Draw annotation circle and text
+      g.append("circle")
+        .attr("cx", x(focus.year))
+        .attr("cy", y(focus.men_average))
+        .attr("r", 4)
+        .attr("fill", "steelblue");
+
+      g.append("circle")
+        .attr("cx", x(focus.year))
+        .attr("cy", y(focus.women_average))
+        .attr("r", 4)
+        .attr("fill", "orange");
+
+      g.append("text")
+        .attr("x", x(focus.year) + 10)
+        .attr("y", y(focus.men_average) - 10)
+        .text("Men: $" + focus.men_average.toFixed(2));
+
+      g.append("text")
+        .attr("x", x(focus.year) + 10)
+        .attr("y", y(focus.women_average) + 15)
+        .text("Women: $" + focus.women_average.toFixed(2));
     }
+  }
+}
+function scene1() {
+  d3.select("#vis").html("");
+  d3.select("#vis")
+    .append("div")
+    .attr("class", "intro-text")
+    .html("<h2>Explore Wage Trends</h2><p>Click next to compare wages over time.</p>");
+}
+
+function scene2() {
+  renderChart({
+    animate: true,
+    annotationYear: 1973
+  });
+}
+
+function scene3() {
+  renderChart({
+    animate: false,
+    annotationYear: 2022
+  });
+}
+
+function scene4() {
+  renderChart({
+    animate: false,
+    annotationYear: null
+  });
+}
 
 
 

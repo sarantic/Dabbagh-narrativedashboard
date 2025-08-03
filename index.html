@@ -35,11 +35,12 @@
       border-radius: 5px;
       padding: 10px 20px;
       margin: 10px;
-      font-size: 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
 
     button:hover {
-      background-color: #f7f5e8;
+      background-color: #ADD8E6;
     }
     .tooltip {
   font-size: 13px;
@@ -127,7 +128,7 @@
 
     function prevScene() {
       sceneIndex = (sceneIndex - 1 + scenes.length) % scenes.length;
-      scenes[sceneIndex]();
+      scenes[sceneIndex]()en;
     }
 
 
@@ -829,7 +830,7 @@ function scene3() {
     title: "Men Still Earn More Than Women",
     annotationText: "Despite progress, a notable wage gap remains between men and women.",
     showTrendLines: true,
-    scene:3;
+    scene:3
 
   });
 

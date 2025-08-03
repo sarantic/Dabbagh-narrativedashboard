@@ -55,6 +55,8 @@
     var sceneIndex = 0;
     var scenes = [scene1, scene2, scene3, scene4];
     var wageData = [];
+    var tooltip = floatingTooltip("tooltip", 160);
+
 
    async function init() {
       try {
@@ -184,46 +186,52 @@ if (trigger.annotationText) {
                   .style("opacity", 0);
   
 
-  // Points
-  g.selectAll(".dot-men")
-    .data(data)
-    .enter()
-    .append("circle")
-    .attr("class", "dot-men")
-    .attr("cx", function(d) { return x(d.year); })
-    .attr("cy", function(d) { return y(d.men_average); })
-    .attr("r", 4)
-    .attr("fill", "steelblue")
-    .on("mouseover", function(event, d) {
-      tooltip.transition().duration(200).style("opacity", 0.9);
-      tooltip.html(`<strong>Year:</strong> ${d.year}<br>
-                    <strong>Men:</strong> $${d.men_average.toFixed(2)}`)
-             .style("left", (event.pageX + 10) + "px")
-             .style("top", (event.pageY - 30) + "px");
-    })
-    .on("mouseout", function() {
-      tooltip.transition().duration(300).style("opacity", 0);
-    });
+// Men data points
+g.selectAll(".dot-men")
+  .data(data)
+  .enter()
+  .append("circle")
+  .attr("class", "dot-men")
+  .attr("cx", function(d) { return x(d.year); })
+  .attr("cy", function(d) { return y(d.men_average); })
+  .attr("r", 4)
+  .attr("fill", "steelblue")
+  .on("mouseover", function(event, d) {
+    tooltip.showTooltip(`
+      <strong>Year:</strong> ${d.year}<br>
+      <strong>Men:</strong> $${d.men_average.toFixed(2)}
+    `, event);
+  })
+  .on("mousemove", function(event) {
+    tooltip.updatePosition(event);
+  })
+  .on("mouseout", function() {
+    tooltip.hideTooltip();
+  });
 
-  g.selectAll(".dot-women")
-    .data(data)
-    .enter()
-    .append("circle")
-    .attr("class", "dot-women")
-    .attr("cx", function(d) { return x(d.year); })
-    .attr("cy", function(d) { return y(d.women_average); })
-    .attr("r", 4)
-    .attr("fill", "orange")
-    .on("mouseover", function(event, d) {
-      tooltip.transition().duration(200).style("opacity", 0.9);
-      tooltip.html(`<strong>Year:</strong> ${d.year}<br>
-                    <strong>Women:</strong> $${d.women_average.toFixed(2)}`)
-             .style("left", (event.pageX + 10) + "px")
-             .style("top", (event.pageY - 30) + "px");
-    })
-    .on("mouseout", function() {
-      tooltip.transition().duration(300).style("opacity", 0);
-    });
+// Women data points
+g.selectAll(".dot-women")
+  .data(data)
+  .enter()
+  .append("circle")
+  .attr("class", "dot-women")
+  .attr("cx", function(d) { return x(d.year); })
+  .attr("cy", function(d) { return y(d.women_average); })
+  .attr("r", 4)
+  .attr("fill", "orange")
+  .on("mouseover", function(event, d) {
+    tooltip.showTooltip(`
+      <strong>Year:</strong> ${d.year}<br>
+      <strong>Women:</strong> $${d.women_average.toFixed(2)}
+    `, event);
+  })
+  .on("mousemove", function(event) {
+    tooltip.updatePosition(event);
+  })
+  .on("mouseout", function() {
+    tooltip.hideTooltip();
+  });
+
 
   if (trigger.highlightYears) {
   trigger.highlightYears.forEach(function(year) {

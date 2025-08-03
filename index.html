@@ -60,23 +60,18 @@
         const data = await d3.csv("data/median_average_wages.csv");
     
         data.forEach(function(d) {
-          d.Year = +d.Year;
-          d.Median = +d.Median.toString().replace(/[$,]/g, '').trim();
-          d.Average = +d.Average.toString().replace(/[$,]/g, '').trim();
+          d.year = +d.year;
+          d.median = +d.median;
+          d.average = +d.average;
         });
     
-        const cleanData = data.filter(function(d) {
-          return !isNaN(d.Year) && !isNaN(d.Median) && !isNaN(d.Average);
-        });
-    
-        console.log("Clean Data:", cleanData);
-    
-        window.wageData = cleanData;
+        window.wageData = data;
         scenes[sceneIndex]();
       } catch (error) {
         console.log("Error loading or parsing CSV:", error);
       }
     }
+
 
     function nextScene() {
       sceneIndex = (sceneIndex + 1) % scenes.length;
@@ -96,46 +91,47 @@
         .html("<h2>Explore Wage Trends</h2><p>How have median and average wages changed from 1973 to 2022?</p><p>Click next to begin your journey.</p>");
     }
 
-   function scene2() {
-  d3.select("#vis").html(""); 
+    function scene2() {
+      d3.select("#vis").html(""); 
+    
+      var svg = d3.select("#vis").append("svg")
+                    .attr("width", 700)
+                    .attr("height", 400);
+    
+      var data = window.wageData;
+    
+      var x = d3.scaleLinear().domain(d3.extent(data, function(d) { return d.year; })).range([50, 650]);
+      var y = d3.scaleLinear().domain([0, d3.max(data, function(d) { return d.average; })]).range([350, 50]);
+    
+      var line = d3.line()
+                   .x(function(d) { return x(d.year); })
+                   .y(function(d) { return y(d.average); });
+    
+      var path = svg.append("path")
+         .datum(data)
+         .attr("fill", "none")
+         .attr("stroke", "orange")
+         .attr("stroke-width", 2)
+         .attr("d", line);
+    
+      var totalLength = path.node().getTotalLength();
+    
+      path
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .duration(3000)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+    
+      svg.append("text")
+         .attr("x", 70)
+         .attr("y", 40)
+         .text("Average Hourly Wages Over Time")
+         .style("font-size", "16px")
+         .style("fill", "black");
+    }
 
-  var svg = d3.select("#vis").append("svg")
-                .attr("width", 700)
-                .attr("height", 400);
-
-  var data = window.wageData;
-
-  var x = d3.scaleLinear().domain(d3.extent(data, function(d) { return d.Year; })).range([50, 650]);
-  var y = d3.scaleLinear().domain([0, d3.max(data, function(d) { return d.Average; })]).range([350, 50]);
-
-  var line = d3.line()
-               .x(function(d) { return x(d.Year); })
-               .y(function(d) { return y(d.Average); });
-
-  var path = svg.append("path")
-     .datum(data)
-     .attr("fill", "none")
-     .attr("stroke", "orange")
-     .attr("stroke-width", 2)
-     .attr("d", line);
-
-  var totalLength = path.node().getTotalLength();
-
-  path
-    .attr("stroke-dasharray", totalLength + " " + totalLength)
-    .attr("stroke-dashoffset", totalLength)
-    .transition()
-    .duration(3000)
-    .ease(d3.easeLinear)
-    .attr("stroke-dashoffset", 0);
-
-  svg.append("text")
-     .attr("x", 70)
-     .attr("y", 40)
-     .text("Average Hourly Wages Over Time")
-     .style("font-size", "16px")
-     .style("fill", "black");
-}
 
 
     init(); // kick things off

@@ -96,60 +96,66 @@
       d3.select("#vis").html(""); 
     
       var svg = d3.select("#vis").append("svg")
-                    .attr("width", 700)
-                    .attr("height", 400);
+                  .attr("width", 700)
+                  .attr("height", 400);
+    
+      var margin = {top: 50, right: 20, bottom: 40, left: 60};
+      var width = 700 - margin.left - margin.right;
+      var height = 400 - margin.top - margin.bottom;
+    
+      var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
       var data = window.wageData;
     
-      // Fix time order and calculate extent
-      var yearExtent = d3.extent(data, function(d) { return d.year; });
-      if (yearExtent[0] > yearExtent[1]) yearExtent.reverse();
+      var x = d3.scaleLinear()
+                .domain(d3.extent(data, function(d) { return d.year; }))
+                .range([0, width]);
     
-      var x = d3.scaleLinear().domain(yearExtent).range([50, 650]);
-      var y = d3.scaleLinear().domain([0, d3.max(data, function(d) { return d.average; })]).range([350, 50]);
+      var y = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d) { return Math.max(d.men_average, d.women_average); })])
+                .range([height, 0]);
     
-      var xAxis = d3.axisBottom(x).tickFormat(d3.format("d"));
-      var yAxis = d3.axisLeft(y);
+      var menLine = d3.line()
+                      .x(function(d) { return x(d.year); })
+                      .y(function(d) { return y(d.men_average); });
     
-      // Add axes
-      svg.append("g")
-         .attr("transform", "translate(0, 350)")
-         .call(xAxis);
+      var womenLine = d3.line()
+                        .x(function(d) { return x(d.year); })
+                        .y(function(d) { return y(d.women_average); });
     
-      svg.append("g")
-         .attr("transform", "translate(50, 0)")
-         .call(yAxis);
+      g.append("path")
+       .datum(data)
+       .attr("fill", "none")
+       .attr("stroke", "steelblue")
+       .attr("stroke-width", 2)
+       .attr("d", menLine);
     
-      // Define and draw line
-      var line = d3.line()
-                   .x(function(d) { return x(d.year); })
-                   .y(function(d) { return y(d.average); });
+      g.append("path")
+       .datum(data)
+       .attr("fill", "none")
+       .attr("stroke", "orange")
+       .attr("stroke-width", 2)
+       .attr("d", womenLine);
     
-      var path = svg.append("path")
-         .datum(data)
-         .attr("fill", "none")
-         .attr("stroke", "orange")
-         .attr("stroke-width", 2)
-         .attr("d", line);
+      // Axes
+      g.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")));
     
-      var totalLength = path.node().getTotalLength();
+      g.append("g")
+        .call(d3.axisLeft(y));
     
-      path
-        .attr("stroke-dasharray", totalLength + " " + totalLength)
-        .attr("stroke-dashoffset", totalLength)
-        .transition()
-        .duration(3000)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
-    
-      // Title
+      // Titles
       svg.append("text")
-         .attr("x", 70)
-         .attr("y", 40)
-         .text("Average Hourly Wages Over Time")
-         .style("font-size", "16px")
-         .style("fill", "black");
+         .attr("x", 350)
+         .attr("y", 20)
+         .attr("text-anchor", "middle")
+         .text("Men's vs Women's Average Wages (1973–2022)")
+         .style("font-size", "16px");
+    
+      // OPTIONAL: Tooltip + Annotations can be added next using d3-annotation or plain SVG
     }
+
 
 
 

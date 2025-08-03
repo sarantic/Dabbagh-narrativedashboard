@@ -60,10 +60,11 @@
         const data = await d3.csv("data/median_average_wages.csv");
     
         data.forEach(function(d) {
-          d.year = +d.year;
-          d.median = +d.median;
-          d.average = +d.average;
-        });
+            d.year = +d.year;
+            d.median = +d.median;
+            d.average = +d.average;
+          });
+
     
         window.wageData = data;
         scenes[sceneIndex]();
@@ -91,7 +92,7 @@
         .html("<h2>Explore Wage Trends</h2><p>How have median and average wages changed from 1973 to 2022?</p><p>Click next to begin your journey.</p>");
     }
 
-    function scene2() {
+   function scene2() {
       d3.select("#vis").html(""); 
     
       var svg = d3.select("#vis").append("svg")
@@ -100,9 +101,26 @@
     
       var data = window.wageData;
     
-      var x = d3.scaleLinear().domain(d3.extent(data, function(d) { return d.year; })).range([50, 650]);
+      // Fix time order and calculate extent
+      var yearExtent = d3.extent(data, function(d) { return d.year; });
+      if (yearExtent[0] > yearExtent[1]) yearExtent.reverse();
+    
+      var x = d3.scaleLinear().domain(yearExtent).range([50, 650]);
       var y = d3.scaleLinear().domain([0, d3.max(data, function(d) { return d.average; })]).range([350, 50]);
     
+      var xAxis = d3.axisBottom(x).tickFormat(d3.format("d"));
+      var yAxis = d3.axisLeft(y);
+    
+      // Add axes
+      svg.append("g")
+         .attr("transform", "translate(0, 350)")
+         .call(xAxis);
+    
+      svg.append("g")
+         .attr("transform", "translate(50, 0)")
+         .call(yAxis);
+    
+      // Define and draw line
       var line = d3.line()
                    .x(function(d) { return x(d.year); })
                    .y(function(d) { return y(d.average); });
@@ -124,6 +142,7 @@
         .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
     
+      // Title
       svg.append("text")
          .attr("x", 70)
          .attr("y", 40)
@@ -131,6 +150,7 @@
          .style("font-size", "16px")
          .style("fill", "black");
     }
+
 
 
 

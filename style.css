@@ -47,3 +47,19 @@ button {
 button:hover {
   background: ##afeeee; /* deep blue on hover */
 }
+
+.custom-btn {
+  background: #2a6786;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  margin: 0 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.custom-btn:hover {
+  background: #afeeee;
+}

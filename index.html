@@ -504,39 +504,40 @@ function scene2() {
       .range([height, 0]);
 
     const annotations = [
-      {
-        note: {
-          title: "2014: Wage Gap = $5.63",
-          label: "This was the smallest wage gap on record.",
-        },
-        connector: {
-          end: "arrow",
-          type: "elbow",
-          lineType: "horizontal",
-          lineWidth: 2,
-        },
-        x: x(2014),
-        y: y(26.87), // women avg in 2014
-        dx: -80,
-        dy: -60
-      },
-      {
-        note: {
-          title: "2022: Gap Widens Slightly",
-          label: "Despite progress, the gap increased again to $7.96.",
-        },
-        connector: {
-          end: "arrow",
-          type: "elbow",
-          lineType: "horizontal",
-          lineWidth: 2,
-        },
-        x: x(2022),
-        y: y(27.86),
-        dx: 40,
-        dy: -50
-      }
-    ];
+  {
+    note: {
+      title: "2014: Wage Gap = $5.63",
+      label: "This was the smallest wage gap on record.",
+    },
+    connector: {
+      end: "arrow",
+      type: "elbow",
+      lineType: "horizontal",
+      lineWidth: 2,
+    },
+    x: x(2014),
+    y: y(21.24), // more accurate: 2014 women avg
+    dx: -60,
+    dy: 60 // moved below
+  },
+  {
+    note: {
+      title: "2022: Gap Widens Slightly",
+      label: "Despite progress, the gap increased again to $7.96.",
+    },
+    connector: {
+      end: "arrow",
+      type: "elbow",
+      lineType: "horizontal",
+      lineWidth: 2,
+    },
+    x: x(2022),
+    y: y(27.86), // still referencing women's avg
+    dx: 60,
+    dy: 60 // also below
+  }
+];
+
 
     const makeAnnotations = d3.annotation()
       .type(d3.annotationLabel)

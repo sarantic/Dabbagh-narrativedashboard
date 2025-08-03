@@ -476,19 +476,18 @@ function scene2() {
   renderChart({
     animate: true,
     annotationYear: null,
-    highlightYears: [1973, 2022],  // focus on growth for women
+    highlightYears: [1973, 2022],
     title: "Women's Wages Have Grown Steadily",
     annotationText: "From $17.31 in 1973 to $27.86 in 2022 – a ~61% increase"
   });
 
-  // Add annotation after delay to give line time to animate
   setTimeout(() => {
     const svg = d3.select("#vis svg");
     const g = svg.select("g");
 
     const data = window.wageData;
-    const width = 700 - 60 - 20;  // svgWidth - left - right margin
-    const height = 400 - 50 - 40; // svgHeight - top - bottom margin
+    const width = 700 - 80 - 80;  // svg width - left/right margins
+    const height = 450 - 80 - 60; // svg height - top/bottom margins
 
     const x = d3.scaleLinear()
       .domain(d3.extent(data, d => d.year))
@@ -504,73 +503,64 @@ function scene2() {
           title: "1973: $17.31",
           label: "Starting point for women"
         },
-       connector: {
-  end: "arrow",
-  type: "elbow",
-  lineType: "horizontal",
-  lineWidth: 2
-},
+        connector: {
+          end: "arrow",
+          type: "elbow",
+          lineType: "horizontal",
+          lineWidth: 2
+        },
         x: x(1973),
         y: y(17.31),
-        dx: -60,
-        dy: -60
+        dx: -70,
+        dy: -50
       },
       {
         note: {
           title: "2022: $27.86",
           label: "Women's wage grew ~61%"
         },
-       connector: {
-  end: "arrow",
-  type: "elbow",
-  lineType: "horizontal",
-  lineWidth: 2
-},
+        connector: {
+          end: "arrow",
+          type: "elbow",
+          lineType: "horizontal",
+          lineWidth: 2
+        },
         x: x(2022),
         y: y(27.86),
-        dx: 30,
+        dx: 40,
         dy: -50
       }
     ];
 
     const makeAnnotations = d3.annotation()
       .type(d3.annotationLabel)
+      .accessors({ x: d => d.x, y: d => d.y })
       .annotations(annotations)
-      .accessors({
-    x: d => d.x,
-    y: d => d.y
-  })
-  .accessorsInverse({
-    x: d => d.x,
-    y: d => d.y
-  })
-  .annotations(annotations)
-  .textWrap(150)
-  .notePadding(10)
-  .noteAlign("middle");
-
+      .textWrap(150)
+      .notePadding(10);
 
     g.append("g")
       .attr("class", "scene2-annotations")
       .call(makeAnnotations);
-  }, 2200); // wait until line animation finishes
-  // Add paragraph below chart
-d3.select("#vis")
-  .append("div")
-  .attr("class", "scene2-text")
-  .style("margin-top", "20px")
-  .style("max-width", "600px")
-  .style("margin-left", "auto")
-  .style("margin-right", "auto")
-  .style("font-size", "16px")
-  .style("color", "#333")
-  .html(`
-    <p>From 1973 to 2022, women’s wages grew by nearly <strong>61%</strong> — a faster rate than men’s wages over the same period.
-    This growth helped narrow the wage gap significantly, especially during the 1990s and early 2000s.</p>
-    <p>Still, the story of progress is incomplete without understanding where we are now. Let's take a closer look in the next slide.</p>
-  `);
 
+    // Add follow-up paragraph below chart
+    d3.select("#vis")
+      .append("div")
+      .attr("class", "scene2-text")
+      .style("margin-top", "20px")
+      .style("max-width", "600px")
+      .style("margin-left", "auto")
+      .style("margin-right", "auto")
+      .style("font-size", "16px")
+      .style("color", "#333")
+      .html(`
+        <p>From 1973 to 2022, women’s wages grew by nearly <strong>61%</strong> — a faster rate than men’s wages over the same period.
+        This growth helped narrow the wage gap significantly, especially during the 1990s and early 2000s.</p>
+        <p>Still, the story of progress is incomplete without understanding where we are now. Let's take a closer look in the next slide.</p>
+      `);
+  }, 2200); // after line animation
 }
+
 
 
 function scene3() {

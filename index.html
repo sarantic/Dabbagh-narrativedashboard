@@ -5,6 +5,7 @@
   <title>Median & Average Wages (1973–2022)</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="javascript/tooltip.js"></script>
+  <script src="https://unpkg.com/d3-svg-annotation@2.5.1/d3-annotation.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <style>
     body {
@@ -56,6 +57,16 @@
   max-width: 600px;
   margin-bottom: 20px;
   text-align: left;
+  
+}
+.annotation-note-title {
+  font-weight: bold;
+  fill: #444;
+}
+
+.annotation-note-label {
+  fill: #666;
+  font-size: 12px;
 }
 
 
@@ -322,12 +333,12 @@ function renderChart(trigger) {
 function scene1() {
   d3.select("#vis").html(""); // Clear previous content
 
-  // Create a container div
+  //container div
   const container = d3.select("#vis")
     .append("div")
     .attr("class", "scene1-container");
 
-  // Add intro text
+  //  intro text
   container.append("div")
     .attr("class", "scene1-text")
     .html(`
@@ -376,27 +387,40 @@ function scene1() {
     .call(d3.axisLeft(y).ticks(5));
 
   // Bars
-  g.selectAll(".bar")
-    .data(barData)
-    .enter()
-    .append("rect")
-    .attr("class", "bar")
-    .attr("x", d => x(d.group))
-    .attr("y", d => y(d.value))
-    .attr("width", x.bandwidth())
-    .attr("height", d => height - y(d.value))
-    .attr("fill", d => d.group === "Men" ? "steelblue" : "orange");
+ g.selectAll(".bar")
+  .data(barData)
+  .enter()
+  .append("rect")
+  .attr("class", "bar")
+  .attr("x", d => x(d.group))
+  .attr("y", height) // Start at bottom
+  .attr("width", x.bandwidth())
+  .attr("height", 0) // Height is 0 at start
+  .attr("fill", d => d.group === "Men" ? "steelblue" : "orange")
+  .transition()
+  .duration(2000)
+  .delay((d, i) => i * 400)
+  .attr("y", d => y(d.value))
+  .attr("height", d => height - y(d.value));
+
 
   // Labels on top
   g.selectAll(".label")
-    .data(barData)
-    .enter()
-    .append("text")
-    .attr("x", d => x(d.group) + x.bandwidth() / 2)
-    .attr("y", d => y(d.value) - 10)
-    .attr("text-anchor", "middle")
-    .style("font-size", "14px")
-    .text(d => `$${d.value.toFixed(2)}`);
+  .data(barData)
+  .enter()
+  .append("text")
+  .attr("x", d => x(d.group) + x.bandwidth() / 2)
+  .attr("y", height - 5) // Start low
+  .attr("text-anchor", "middle")
+  .style("font-size", "14px")
+  .style("opacity", 0)
+  .transition()
+  .delay((d, i) => 2000 + i * 400)
+  .duration(500)
+  .style("opacity", 1)
+  .attr("y", d => y(d.value) - 10)
+  .text(d => `$${d.value.toFixed(2)}`);
+
 
   // Add annotation
   g.append("text")
@@ -405,6 +429,35 @@ function scene1() {
     .attr("text-anchor", "middle")
     .style("fill", "#555")
     .text("In 1973, women earned 64% of what men earned");
+  // d3-annotation arrow pointing to the women's bar
+const annotations = [
+  {
+    note: {
+      label: "Women earned only $17.31 in 1973",
+      title: "Wage Disparity"
+    },
+    subject: {
+      y1: y(17.31),
+      y2: y(17.31)
+    },
+    connector: {
+      end: "arrow"
+    },
+    x: x("Women") + x.bandwidth() / 2,
+    y: y(17.31),
+    dy: -70,
+    dx: -50
+  }
+];
+
+const makeAnnotations = d3.annotation()
+  .type(d3.annotationLabel)
+  .annotations(annotations);
+
+g.append("g")
+  .attr("class", "annotation-group")
+  .call(makeAnnotations);
+
 }
 
 function scene2() {
